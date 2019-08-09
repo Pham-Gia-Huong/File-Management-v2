@@ -1,0 +1,104 @@
+.wrap {
+  margin-top: 8px;
+}
+.grid-content {
+  display: flex;
+  flex-wrap: wrap;
+}
+.grid-content .grid-item {
+  display: flex;
+  width: calc(15%);
+  align-items: center;
+  flex-direction: column;
+  margin: 10px;
+  position: relative;
+}
+.grid-item .information {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 0px 10px;
+  font-size: 12px;
+  background: rgba(20, 25, 38, 0.8);
+  color: white;
+  right: 0;
+  font-weight: bold;
+}
+.grid-item .information .name {
+  margin-right: 20px;
+}
+.layout-grid {
+  margin: 15px;
+  background: #f4f7f8;
+}
+.grid-item img {
+  width: 100%;
+  max-height: 200px;
+  height: 100%;
+}
+
+.btn-new-folder {
+  color: #3498db;
+  background: #f4f7f8;
+  border: none;
+  cursor: pointer;
+  line-height: inherit;
+}
+.layout-center {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.popup-container {
+  background: white;
+  min-width: 400px;
+  padding: 5px 10px;
+}
+
+.popup-title-icon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  line-height: initial;
+}
+.popup-title-icon .popup-delete-icon {
+  background: #f4f7f8;
+  color: black;
+  font-weight: bold;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.popup-input-name {
+  line-height: initial;
+  margin-bottom: 15px;
+  line-height: 35px;
+}
+.popup-input-name input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.popup-create-close {
+  display: flex;
+  justify-content: flex-end;
+}
+.popup-btn {
+  color: black;
+  font-weight: bold;
+  padding: 10px 15px;
+  margin-left: 10px;
+  cursor: pointer;
+  line-height: initial;
+}
+.popup-btn.create {
+  background: #dae8fc;
+}
+.popup-btn.close {
+  background: #f8cecd;
+}
