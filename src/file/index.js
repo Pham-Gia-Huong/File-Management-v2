@@ -1,14 +1,14 @@
+import Ultil from "../ultil/";
 class File {
   constructor() {
-    this.state = {
-      elmLayoutCenter: {},
+    this.ui = {
       elmFileInput: {},
       currentFileValue: null
     };
+    this.ultil = new Ultil();
   }
 
   renderInputFile() {
-    let { elmFileInput } = this.state;
     let elmWrap = document.createElement("div");
     elmWrap.className = "wrap";
 
@@ -16,18 +16,18 @@ class File {
     elmInputLabel.textContent = "File";
     elmWrap.appendChild(elmInputLabel);
 
-    elmFileInput = document.createElement("input");
-    elmFileInput.type = "file";
-    elmFileInput.className = "wrap_input";
-    elmFileInput.accept = ".xls,.xlsx,.png,.jpg,.jpeg,.pdf,.doc";
-    elmWrap.appendChild(elmFileInput);
+    this.ui.elmFileInput = document.createElement("input");
+    this.ui.elmFileInput.type = "file";
+    this.ui.elmFileInput.className = "wrap_input";
+    this.ui.elmFileInput.accept = ".xls,.xlsx,.png,.jpg,.jpeg,.pdf,.doc";
+    elmWrap.appendChild(this.ui.elmFileInput);
 
     let elmSpace = kintone.app.record.getSpaceElement("hardInputFile");
     elmSpace.appendChild(elmWrap);
 
-    elmFileInput.addEventListener("change", () =>
-      this.handleFillFileInfoToField(elmFileInput.files[0])
-    );
+    this.ui.elmFileInput.addEventListener("change", () => {
+      this.handleFillFileInfoToField(this.ui.elmFileInput.files[0]);
+    });
   }
 
   setFileInformation(file, imgBase64) {
@@ -54,14 +54,7 @@ class File {
     record.b64.value = fileInfo.thumb64;
     kintone.app.record.set(getRecordDetail);
   }
-  updateRecord(event, record) {
-    var body = {
-      app: event.appId,
-      id: event.recordId,
-      record
-    };
-    return kintone.api(kintone.api.url("/k/v1/record", true), "PUT", body);
-  }
+
   async handleFillFileInfoToField(file) {
     let base64 = await this.convertFileToBase64(file);
     this.fillFileInfoToField(file, base64);
@@ -101,42 +94,9 @@ class File {
     });
   }
 
-  disableField(objFieldRecord) {
-    if (objFieldRecord.type.value === "Folder") {
-      return;
-    }
-    for (const key in objFieldRecord) {
-      if (!objFieldRecord.hasOwnProperty(key)) {
-        return;
-      }
-      if (key != "comment" && key != "date") {
-        const record = objFieldRecord[key];
-        record.disabled = true;
-      }
-    }
-  }
-
-  disableHistory(arrHistory) {
-    arrHistory.forEach(history => {
-      let valueHistory = history.value;
-      valueHistory.subComment.disabled = true;
-      valueHistory.subDate.disabled = true;
-      valueHistory.subFile.disabled = true;
-      valueHistory.version.disabled = true;
-    });
-  }
-
-  hideFieldRecord(recordFieldName, type) {
-    if (type === "File") {
-      return kintone.app.record.setFieldShown(recordFieldName, false);
-    }
-
-    recordFieldName.forEach(fieldName => {
-      kintone.app.record.setFieldShown(fieldName, false);
-    });
-  }
   async setValueFileAttachment(record) {
-    let file = this.state.elmFileInput.files[0];
+    let file = this.ui.elmFileInput.files[0];
+
     if (file) {
       record.file = {};
       let blob = new Blob([file], { type: file.type });
@@ -153,7 +113,7 @@ class File {
     if (Object.keys(record).length === 0) {
       return;
     }
-    await this.updateRecord(event, record);
+    await this.ultil.updateRecord(event, record);
   }
 
   convertBase64ToFile(dataurl, filename) {
@@ -174,7 +134,7 @@ class File {
     let firstValueInTable = arrHistory[0].value.version.value;
     let numberVersion = arrHistory.length;
 
-    this.state.currentFileValue = {
+    this.ui.currentFileValue = {
       value: {
         subComment: record.comment,
         subDate: record.date,
@@ -225,9 +185,7 @@ class File {
   }
 
   setValueFileHistory(record, event) {
-    let { currentFileValue } = this.state;
-    console.log("cur", currentFileValue);
-
+    let { currentFileValue } = this.ui;
     let version = currentFileValue.value.version.value;
     let newValueHistoryTable = event.record.history;
     let minVersion = 1;
@@ -241,103 +199,6 @@ class File {
     return record;
   }
 
-  renderBtnNewFolder() {
-    let elmLayoutFolder = document.createElement("div");
-
-    let btnNewFolder = document.createElement("button");
-    btnNewFolder.className = "btn-new-folder";
-    btnNewFolder.textContent = "New Folder";
-    btnNewFolder.addEventListener("click", () => this.showPopupNewFolder());
-    elmLayoutFolder.appendChild(btnNewFolder);
-
-    let menuSpace = kintone.app.getHeaderMenuSpaceElement();
-    menuSpace.appendChild(elmLayoutFolder);
-  }
-
-  renderPopupTitleAndIcon(elmPopupContainer) {
-    let elmTitleAndIcon = document.createElement("div");
-    elmTitleAndIcon.className = "popup-title-icon";
-    elmPopupContainer.appendChild(elmTitleAndIcon);
-
-    let elmTitle = document.createElement("div");
-    elmTitle.textContent = "New Folder";
-    elmTitleAndIcon.appendChild(elmTitle);
-
-    let elmCloseIcon = document.createElement("div");
-    elmCloseIcon.textContent = "x";
-    elmCloseIcon.className = "popup-delete-icon";
-    elmCloseIcon.addEventListener("click", () => this.hidePopupNewFolder());
-    elmTitleAndIcon.appendChild(elmCloseIcon);
-  }
-  renderPopupInput(elmPopupContainer) {
-    let elmNameAndInput = document.createElement("div");
-    elmNameAndInput.className = "popup-input-name";
-    elmPopupContainer.appendChild(elmNameAndInput);
-
-    let elmName = document.createElement("div");
-    elmName.textContent = "Name";
-    elmNameAndInput.appendChild(elmName);
-
-    let elmInput = document.createElement("input");
-    elmNameAndInput.appendChild(elmInput);
-    return elmInput;
-  }
-  renderPopupBtn(elmPopupContainer, inputValuePopup) {
-    let elmCreateAndClose = document.createElement("div");
-    elmCreateAndClose.className = "popup-create-close";
-    elmPopupContainer.appendChild(elmCreateAndClose);
-
-    let elmBtnCreate = document.createElement("div");
-    elmBtnCreate.className = "popup-btn create";
-    elmBtnCreate.textContent = "Create";
-    elmBtnCreate.addEventListener("click", () => handleNewFolder(inputValuePopup));
-    elmCreateAndClose.appendChild(elmBtnCreate);
-
-    let elmBtnClose = document.createElement("div");
-    elmBtnClose.className = "popup-btn close";
-    elmBtnClose.textContent = "Close";
-    elmBtnClose.addEventListener("click", () => this.hidePopupNewFolder());
-    elmCreateAndClose.appendChild(elmBtnClose);
-  }
-  showPopupNewFolder() {
-    let { elmLayoutCenter } = this.state;
-    elmLayoutCenter = document.createElement("div");
-    elmLayoutCenter.className = "layout-center";
-
-    let elmPopupContainer = document.createElement("div");
-    elmPopupContainer.className = "popup-container";
-    elmLayoutCenter.appendChild(elmPopupContainer);
-
-    this.renderPopupTitleAndIcon(elmPopupContainer);
-    let inputValuePopup = this.renderPopupInput(elmPopupContainer);
-    this.renderPopupBtn(elmPopupContainer, inputValuePopup);
-
-    let menuSpace = kintone.app.getHeaderMenuSpaceElement();
-    menuSpace = kintone.app.getHeaderMenuSpaceElement();
-    menuSpace.appendChild(elmLayoutCenter);
-  }
-  addRecord(record) {
-    var body = {
-      app: kintone.app.getId(),
-      record
-    };
-    kintone.api(kintone.api.url("/k/v1/record", true), "POST", body);
-  }
-  handleNewFolder(inputValuePopup) {
-    let folderValue = {
-      name: {
-        value: inputValuePopup.value
-      },
-      type: {
-        value: "Folder"
-      }
-    };
-    addRecord(folderValue);
-  }
-  hidePopupNewFolder() {
-    let menuSpace = kintone.app.getHeaderMenuSpaceElement();
-    menuSpace.removeChild(this.state.elmLayoutCenter);
-  }
   setValueAndUploadFile(event) {
     let fileType = event.record.type.value;
     if (fileType === "File") {

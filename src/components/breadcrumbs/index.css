@@ -1,0 +1,13 @@
+.name-arrow {
+  display: flex;
+  margin-right: 10px;
+  font-size: 25px;
+}
+.bread-crumb-name {
+  margin-right: 10px;
+  cursor: pointer;
+}
+.bread-crumb-wrap {
+  display: flex;
+  padding-left: 15px;
+}
