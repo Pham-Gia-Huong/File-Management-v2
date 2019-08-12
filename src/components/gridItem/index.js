@@ -61,8 +61,8 @@ class GridItem {
 
     let initGridTitle = new Label({
       name: this.props.title,
-      fontSize: this.props.fontSize,
-      fontWeight: this.props.fontWeight
+      fontSize: this.props.style.fontSize,
+      fontWeight: this.props.style.fontWeight
     });
 
     let gridTitle = initGridTitle.render();
