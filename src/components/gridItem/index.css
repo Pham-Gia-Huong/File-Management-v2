@@ -1,0 +1,7 @@
+.grid-item {
+  display: flex;
+  flex-wrap: wrap;
+}
+#layout-grid {
+  margin: 20px;
+}

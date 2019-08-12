@@ -13,6 +13,7 @@
   margin: 10px;
   position: relative;
 }
+
 .grid-item .information {
   position: absolute;
   bottom: 0;
@@ -27,15 +28,12 @@
 .grid-item .information .name {
   margin-right: 20px;
 }
-.layout-grid {
-  margin: 15px;
-  background: #f4f7f8;
-}
-.grid-item img {
+
+/* .grid-item img {
   width: 100%;
   max-height: 200px;
   height: 100%;
-}
+} */
 
 .btn-new-folder {
   color: #3498db;

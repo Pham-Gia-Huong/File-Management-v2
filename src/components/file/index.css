@@ -1,0 +1,19 @@
+.file-layout {
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
+.label.file-label {
+  position: absolute;
+  bottom: 0;
+  color: white;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  font-size: 16px;
+  bottom: 6px;
+  padding: 5px;
+}
+.file-item {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}

@@ -1,0 +1,7 @@
+.folder {
+  display: flex;
+  align-self: center;
+  width: calc(10% - 10px);
+  margin-right: 10px;
+  cursor: pointer;
+}

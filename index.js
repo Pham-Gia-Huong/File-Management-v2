@@ -1,18 +1,12 @@
-import File from "./src/file";
-import Folder from "./src/folder";
-
+import File from "./src/components/file/";
+import Folder from "./src/components/folder/";
 import "./index.css";
-import Ultil from "./src/ultil";
-
-import BreadCrumbs from "./src/components/breadcrumbs/";
 import Container from "./src/container";
+import "./lib/fontAwesome";
 
 (() => {
-  let file = new File();
-  let ultil = new Ultil();
-  let folder = new Folder();
-  let container = new Container();
   kintone.events.on("app.record.edit.submit.success", event => {
+    let file = new File();
     file.setValueAndUploadFile(event);
   });
   kintone.events.on("app.record.detail.show", event => {
@@ -24,6 +18,7 @@ import Container from "./src/container";
     }
   });
   kintone.events.on("app.record.edit.show", event => {
+    let file = new File();
     let objFieldRecord = event.record;
     let recordType = objFieldRecord.type.value;
     let arrHistory = event.record.history.value;
@@ -40,7 +35,9 @@ import Container from "./src/container";
   });
 
   kintone.events.on("app.record.index.show", () => {
-    folder.renderBtnNewFolder();
-    container.renderBreadCrumb();
+    let container = new Container();
+    // let folder = new Folder();
+    // folder.renderBtnNewFolder();
+    container.render();
   });
 })();
