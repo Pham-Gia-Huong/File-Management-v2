@@ -1,6 +1,6 @@
 import Ultil from "../../ultil/index";
 import { required } from "../../constant/index";
-import Icon from "../icon/icon";
+import Icon from "../Icon";
 import Label from "../label";
 import "./index.css";
 
@@ -8,7 +8,7 @@ class Folder {
   constructor(props) {
     this.props = props;
     this.icon = new Icon({
-      src: props.src,
+      icon: "fas fa-folder",
       fontSize: props.style.fontIcon,
       marginRight: props.style.marginRight
     });

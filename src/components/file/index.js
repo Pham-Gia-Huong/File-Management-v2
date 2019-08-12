@@ -1,6 +1,6 @@
 import Label from "../label";
-import Icon from "../icon/icon";
 import "./index.css";
+import Icon from "../Icon";
 class File {
   constructor(props) {
     this.props = props;
@@ -14,14 +14,24 @@ class File {
     let fileItem = document.createElement("div");
     fileItem.className = "file-item";
     fileItem.onclick = () => this.props.onClick();
-    let fileIcon = new Icon({
-      src: this.props.src,
-      type: this.props.type,
-      width: this.props.width,
-      height: this.props.height
-    });
-    let elmFileIcon = fileIcon.render();
-    fileItem.appendChild(elmFileIcon);
+    let fileImage = "";
+    let elmFileImage = "";
+
+    if (this.props.type !== "default") {
+      fileImage = new Icon({
+        icon: this.props.image,
+        fontSize: "50px"
+      });
+      elmFileImage = fileImage.render();
+    } else {
+      fileImage = document.createElement("img");
+      fileImage.src = this.props.image;
+      fileImage.width = this.props.width;
+      fileImage.height = this.props.height;
+      elmFileImage = fileImage;
+    }
+
+    fileItem.appendChild(elmFileImage);
 
     let labelFile = "file-label";
     let fileName = new Label({ name: this.props.name, className: labelFile });

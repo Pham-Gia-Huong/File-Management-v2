@@ -8,18 +8,28 @@ class GridItem {
     this.props = props;
     this.item = props.item;
   }
+
   renderItemGrid(gridItem, gridItemLayout) {
-    return this.props.arrItem.map(value => {
-      let item = this.renderFileOrFolder(value.name, value.src);
+    return this.props.listItem.map(value => {
+      let image = "";
+      if (value.icon) {
+        image = value.icon;
+      } else {
+        image = value.thumbNail;
+      }
+
+      let item = this.renderFileOrFolder(value.name, image);
       gridItem.appendChild(item);
       gridItemLayout.appendChild(gridItem);
     });
   }
+
   selectedFolder(name) {
     console.log(name);
   }
   selectedFile() {}
-  renderFileOrFolder(name, src) {
+  checkTypeItemGrid() {}
+  renderFileOrFolder(name, value) {
     let item = null;
     if (this.props.type === "Folder") {
       let propsFolder = {
@@ -28,15 +38,15 @@ class GridItem {
           fontIcon: "50px",
           fontSize: "20px"
         },
-        src,
         name,
         onClick: this.selectedFolder
       };
+
       item = new Folder(propsFolder);
     } else {
       let propsFile = {
         name,
-        src,
+        image: value,
         style: {
           fontSize: "50px"
         },
@@ -56,9 +66,6 @@ class GridItem {
     let gridItemLayout = document.createElement("div");
     gridItemLayout.className = "grid-item-layout";
 
-    let gridItem = document.createElement("div");
-    gridItem.className = "grid-item";
-
     let initGridTitle = new Label({
       name: this.props.title,
       fontSize: this.props.style.fontSize,
@@ -68,6 +75,8 @@ class GridItem {
     let gridTitle = initGridTitle.render();
     gridItemLayout.appendChild(gridTitle);
 
+    let gridItem = document.createElement("div");
+    gridItem.className = "grid-item";
     this.renderItemGrid(gridItem, gridItemLayout);
 
     return gridItemLayout;

@@ -11,6 +11,10 @@ class Container {
       arrFolder: [{ id: 0, name: "abc" }, { id: 1, name: "def" }, { id: 2, name: "erg" }, { id: 3, name: "ccc" }],
       onClick: this.selectedBreadCrumb
     });
+    this.folderGrid = null;
+    this.fileGrid = null;
+    this.renderFolderGrid();
+    this.renderFileGrid();
   }
 
   selectedBreadCrumb(e) {
@@ -29,99 +33,36 @@ class Container {
     return btnWrap;
   }
   renderFolderGrid() {
-    let arrNameFolder = [{ src: "fas fa-folder", name: "A" }];
+    let arrNameFolder = [{ name: "A" }];
 
-    let folderGrid = new GridItem({
-      arrItem: arrNameFolder,
+    this.folderGrid = new GridItem({
+      listItem: arrNameFolder,
       type: "Folder",
       title: "Folder",
       style: { fontSize: "20px", fontWeight: "bold" }
     });
-    return folderGrid.render();
+
+    return this.folderGrid.render();
   }
   renderFileGrid() {
     let arrFile = [
       {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
-      },
-      {
-        src:
-          "https://scontent.fsgn2-3.fna.fbcdn.net/v/t1.0-9/68350161_2137155336576998_2262852731632877568_o.jpg?_nc_cat=108&_nc_oc=AQlF4qUWqCW6J_fu7UVeyMxDgDjQnP3f3vSSojsF7_v4q0jXXBhlNYuQFoVlikGlIXI&_nc_ht=scontent.fsgn2-3.fna&oh=93e5b40dab8f589977ac4cb7bfe9389b&oe=5DEAD441",
-        name: "Word"
+        icon: "",
+        name: "hehe",
+        thumbNail:
+          "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
       }
     ];
-    let fileGrid = new GridItem({
-      arrItem: arrFile,
+    this.fileGrid = new GridItem({
+      listItem: arrFile,
       type: "File",
       title: "File",
       style: { fontSize: "20px", fontWeight: "bold" }
     });
-    return fileGrid.render();
+    return this.fileGrid.render();
   }
   render() {
-    let containerGrid = document.getElementById("layout-grid");
+    let containerGrid = document.createElement("div");
 
     containerGrid.appendChild(this.breadCrumb.render());
 
@@ -133,6 +74,8 @@ class Container {
 
     let fileGrid = this.renderFileGrid(containerGrid);
     containerGrid.appendChild(fileGrid);
+
+    return containerGrid;
   }
 }
 export default Container;

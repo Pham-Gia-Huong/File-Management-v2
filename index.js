@@ -38,6 +38,7 @@ import "./lib/fontAwesome";
     let container = new Container();
     // let folder = new Folder();
     // folder.renderBtnNewFolder();
-    container.render();
+    let containerGrid = document.getElementById("layout-grid");
+    containerGrid.appendChild(container.render());
   });
 })();
