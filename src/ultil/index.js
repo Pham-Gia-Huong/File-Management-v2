@@ -117,8 +117,6 @@ function setFileInformation(file, imgBase64) {
 }
 async function handleFillFileInfoToField(file) {
   elmFileInput = file;
-  console.log("elmFileInput", elmFileInput);
-
   let base64 = await convertFileToBase64(file);
   fillFileInfoToField(file, base64);
 }
