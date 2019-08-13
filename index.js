@@ -25,30 +25,17 @@ import InputFile from "./src/components/inputFile";
     ultil.js.disableHistory(arrHistory);
     if (recordType === "File") {
       let inputFile = new InputFile({ onChange: ultil.event.edit.handleFillFileInfoToField });
-
       ultil.js.hideFieldRecord(["b64", "file"]);
       elmSpace.appendChild(inputFile.render());
-
       ultil.event.edit.getCurrentFileValue(objFieldRecord, arrHistory);
     } else {
-      ultil.js.hideFieldRecord([
-        "parentFolder",
-        "file",
-        "extension",
-        "size",
-        "comment",
-        "history",
-        "base64",
-        "date",
-        "type"
-      ]);
+      ultil.js.hideFieldRecord(["parentFolder", "file", "extension", "size", "comment", "history", "base64", "date", "type"]);
     }
     return event;
   });
 
   kintone.events.on("app.record.index.show", () => {
     let container = new Container();
-
     let containerGrid = document.getElementById("layout-grid");
     containerGrid.appendChild(container.render());
   });

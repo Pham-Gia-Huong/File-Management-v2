@@ -2,41 +2,51 @@ import "./index.css";
 class BreadCrumbs {
   constructor(props) {
     this.props = props;
-    this.breadCrumbWrap = document.createElement("div");
+    this.breadCrumbWrapper = document.createElement("div");
   }
-  setListFolder(arrFolder, folderId) {
-    let indexFolder = arrFolder.findIndex(folder => folder.id === folderId);
-    let lastIndex = arrFolder.length - 1;
+  setListFolder(folderId) {
+    let indexFolder = this.props.arrFolder.findIndex(folder => folder.id === folderId);
+    let lastIndex = this.props.arrFolder.length - 1;
     if (lastIndex === indexFolder) {
       return;
     }
-    let newlistFolder = arrFolder.slice(0, indexFolder + 1);
+    let newlistFolder = this.props.arrFolder.slice(0, indexFolder + 1);
     return newlistFolder;
   }
   removeBreadCrumb(elmNameAndArrow) {
-    let indexElement = [...this.breadCrumbWrap.children].indexOf(elmNameAndArrow);
-    let elmChildWrap = this.breadCrumbWrap.children;
+    let indexElement = [...this.breadCrumbWrapper.children].indexOf(elmNameAndArrow);
+    let elmChildWrap = this.breadCrumbWrapper.children;
     for (let i = elmChildWrap.length - 1; i >= 0; i--) {
       if (i > indexElement) {
-        this.breadCrumbWrap.removeChild(elmChildWrap[i]);
+        this.breadCrumbWrapper.removeChild(elmChildWrap[i]);
       }
     }
     let elmLastArrow = elmChildWrap[elmChildWrap.length - 1];
-    let isArrowExist = elmLastArrow && elmLastArrow.children[1];
-    if (isArrowExist) {
+    let isLastArrowExist = elmLastArrow && elmLastArrow.children[1];
+    if (isLastArrowExist) {
       elmLastArrow.removeChild(elmLastArrow.children[1]);
     }
   }
-  handleSelected(elmNameAndArrow, arrFolder, folderId) {
+  handleSelected(elmNameAndArrow, folderId) {
     this.removeBreadCrumb(elmNameAndArrow);
-    this.setListFolder(arrFolder, folderId);
+    this.setListFolder(folderId);
   }
 
-  renderItemBreadCrumb(arrFolder) {
-    if (arrFolder && arrFolder.length === 0) {
+  renderArrowDom(nameAndArrow, folder, elmFolderName) {
+    nameAndArrow.appendChild(elmFolderName);
+    let arrowRight = document.createElement("div");
+    arrowRight.textContent = ">";
+    let isNotLastElm = folder.id !== this.props.arrFolder.length - 1;
+    if (isNotLastElm) {
+      nameAndArrow.appendChild(arrowRight);
+    }
+  }
+
+  renderItemBreadCrumb() {
+    if (this.props.arrFolder && this.props.arrFolder.length === 0) {
       return;
     }
-    arrFolder.map(folder => {
+    this.props.arrFolder.map(folder => {
       let nameAndArrow = document.createElement("div");
       nameAndArrow.className = "name-arrow";
 
@@ -44,23 +54,17 @@ class BreadCrumbs {
       elmFolderName.className = "bread-crumb-name";
       elmFolderName.textContent = folder.name;
 
-      nameAndArrow.appendChild(elmFolderName);
-      let arrowRight = document.createElement("div");
-      arrowRight.textContent = ">";
-      let isNotLastElm = folder.id !== arrFolder.length - 1;
-      if (isNotLastElm) {
-        nameAndArrow.appendChild(arrowRight);
-      }
+      this.renderArrowDom(nameAndArrow, folder, elmFolderName);
 
-      elmFolderName.onclick = () => this.handleSelected(nameAndArrow, arrFolder, folder.id);
-      this.breadCrumbWrap.appendChild(nameAndArrow);
+      elmFolderName.onclick = () => this.handleSelected(nameAndArrow, folder.id);
+      this.breadCrumbWrapper.appendChild(nameAndArrow);
     });
   }
   render() {
-    this.breadCrumbWrap.className = "bread-crumb-wrap";
-    this.renderItemBreadCrumb(this.props.arrFolder);
+    this.breadCrumbWrapper.className = "bread-crumb-wrap";
+    this.renderItemBreadCrumb();
 
-    return this.breadCrumbWrap;
+    return this.breadCrumbWrapper;
   }
 }
 export default BreadCrumbs;

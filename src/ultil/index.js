@@ -14,10 +14,12 @@ const ultil = {
       getCurrentFileValue,
       handleFillFileInfoToField
     }
-  }
+  },
+  breadcrumb: {}
 };
 let currentFileValue = {};
 let elmFileInput;
+
 function addRecord(record) {
   var body = {
     app: kintone.app.getId(),
@@ -122,14 +124,14 @@ async function handleFillFileInfoToField(file) {
 }
 function setValueFileHistory(record, event) {
   let version = currentFileValue.value.version.value;
-  let newValueHistoryTable = event.record.history;
+  let newHistoryTableValue = event.record.history;
   let minVersion = 1;
   if (version === minVersion) {
-    newValueHistoryTable.value[0].value = { ...currentFileValue.value };
+    newHistoryTableValue.value[0].value = { ...currentFileValue.value };
   } else {
-    newValueHistoryTable.value.push(currentFileValue);
+    newHistoryTableValue.value.push(currentFileValue);
   }
-  record.history = newValueHistoryTable;
+  record.history = newHistoryTableValue;
 
   return record;
 }
