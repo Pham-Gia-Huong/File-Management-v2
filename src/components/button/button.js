@@ -11,7 +11,12 @@ class Button {
     let button = document.createElement("button");
     button.className = "button " + classProps;
     button.textContent = this.props.name;
-    button.onClick = this.props.onClick;
+    button.onclick = this.props.onClick;
+    if (this.props.style) {
+      button.style.background = this.props.style.background;
+      button.style.color = this.props.style.color;
+    }
+
     return button;
   }
 }

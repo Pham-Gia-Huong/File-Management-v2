@@ -6,80 +6,67 @@ import File from "../file";
 class GridItem {
   constructor(props) {
     this.props = props;
-    this.item = props.item;
+    this.gridItemLayout = document.createElement("div");
+    this.gridItem = document.createElement("div");
   }
 
-  renderItemGrid(gridItem, gridItemLayout) {
-    return this.props.listItem.map(value => {
+  renderItemGrid() {
+    this.props.listItem.map(value => {
       let image = "";
       if (value.icon) {
         image = value.icon;
       } else {
         image = value.thumbNail;
       }
-
       let item = this.renderFileOrFolder(value.name, image);
-      gridItem.appendChild(item);
-      gridItemLayout.appendChild(gridItem);
+
+      this.gridItem.className = "grid-item";
+      this.gridItem.appendChild(item);
+      this.gridItemLayout.appendChild(this.gridItem);
     });
   }
 
-  selectedFolder(name) {
-    console.log(name);
-  }
-  selectedFile() {}
+  selectedFolder(elmFileLayout) {}
   checkTypeItemGrid() {}
-  renderFileOrFolder(name, value) {
+  setFolderValue(name) {
+    let propsFolder = {
+      name,
+      onClick: this.selectedFolder
+    };
+    return new Folder(propsFolder);
+  }
+  setFileValue(name, image) {
+    let propsFile = {
+      name,
+      image,
+      type: "default",
+      width: 200,
+      height: 200
+    };
+    return new File(propsFile);
+  }
+  renderFileOrFolder(name, image) {
     let item = null;
     if (this.props.type === "Folder") {
-      let propsFolder = {
-        style: {
-          marginRight: "20px",
-          fontIcon: "50px",
-          fontSize: "20px"
-        },
-        name,
-        onClick: this.selectedFolder
-      };
-
-      item = new Folder(propsFolder);
+      item = this.setFolderValue(name);
     } else {
-      let propsFile = {
-        name,
-        image: value,
-        style: {
-          fontSize: "50px"
-        },
-        type: "default",
-        width: 200,
-        height: 200,
-        onClick: this.selectedFile
-      };
-      item = new File(propsFile);
+      item = this.setFileValue(name, image);
     }
     return item.render();
   }
-  selectedFile(e) {
-    console.log("file");
-  }
   render() {
-    let gridItemLayout = document.createElement("div");
-    gridItemLayout.className = "grid-item-layout";
+    this.gridItemLayout.className = "grid-item-layout";
 
-    let initGridTitle = new Label({
+    let gridTitle = new Label({
       name: this.props.title,
-      fontSize: this.props.style.fontSize,
-      fontWeight: this.props.style.fontWeight
+      fontSize: "20px",
+      fontWeight: "bold"
     });
+    this.gridItemLayout.appendChild(gridTitle.render());
 
-    let gridTitle = initGridTitle.render();
-    gridItemLayout.appendChild(gridTitle);
+    this.renderItemGrid(this.gridItemLayout);
 
-    let gridItem = document.createElement("div");
-    gridItem.className = "grid-item";
-    this.renderItemGrid(gridItem, gridItemLayout);
-
-    return gridItemLayout;
+    return this.gridItemLayout;
   }
 }
 

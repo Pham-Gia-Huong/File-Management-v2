@@ -5,13 +5,13 @@ class Label {
     this.props = props;
   }
   render() {
-    let classProps = "";
+    let propsClass = "";
     if (this.props.className) {
-      classProps = this.props.className;
+      propsClass = this.props.className;
     }
     let label = document.createElement("label");
     label.textContent = this.props.name;
-    label.className = "label " + classProps;
+    label.className = "label " + propsClass;
     label.style.fontSize = this.props.fontSize;
     label.style.fontWeight = this.props.fontWeight;
     return label;

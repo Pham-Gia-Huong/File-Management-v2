@@ -17,3 +17,6 @@
   overflow: hidden;
   cursor: pointer;
 }
+.selected-file {
+  background: gray !important;
+}

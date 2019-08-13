@@ -5,15 +5,8 @@ class Icon {
   }
 
   render() {
-    let propsClass = "";
     let icon = document.createElement("div");
-    icon.style.marginRight = this.props.marginRight;
-
-    if (this.props.className) {
-      propsClass = this.props.className;
-    }
-    icon.className = this.props.icon + " " + propsClass;
-    icon.style.fontSize = this.props.fontSize;
+    icon.className = this.props.icon + " icon ";
 
     return icon;
   }

@@ -8,12 +8,10 @@ class Folder {
   constructor(props) {
     this.props = props;
     this.icon = new Icon({
-      icon: "fas fa-folder",
-      fontSize: props.style.fontIcon,
-      marginRight: props.style.marginRight
+      icon: "fas fa-folder"
     });
 
-    this.folderName = new Label({ name: props.name, fontSize: props.style.fontSize });
+    this.folderName = new Label({ name: props.name, fontSize: "20px" });
   }
   render() {
     let folder = document.createElement("div");
