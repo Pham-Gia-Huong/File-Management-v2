@@ -1,4 +1,4 @@
-const ultil = {
+const util = {
   js: {
     disableField,
     disableHistory,
@@ -18,11 +18,81 @@ const ultil = {
       getRecordByFolder
     }
   },
-  breadcrumb: {}
+  breadcrumb: {},
+  file: { addFile }
 };
 let currentFileValue = {};
 let elmFileInput;
-
+function setDefaultValueTable() {
+  let historyTable = [
+    {
+      value: {
+        subComment: {
+          value: ""
+        },
+        subDate: {
+          value: ""
+        },
+        subFile: {
+          value: []
+        },
+        version: {
+          value: ""
+        }
+      }
+    }
+  ];
+  return historyTable;
+}
+async function addFile(file) {
+  if (file) {
+    try {
+      let fileInfo = setFileInformation(file);
+      let blob = new Blob([file], { type: file.type });
+      let response = await uploadFileKey(blob, file.name);
+      let fileKey = response.result;
+      fileInfo.fileKey = [JSON.parse(fileKey)];
+      let base64 = await convertFileToBase64(file);
+      fileInfo.thumb64 = base64;
+      let bodyNewFile = setNewValueFile(fileInfo);
+      await addRecord(bodyNewFile);
+      let listRecord = await getRecordByFolder();
+      return listRecord;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}
+function setNewValueFile(fileInfo) {
+  // showSpinner();
+  let bodyNewFile = {
+    file: {
+      value: fileInfo.fileKey
+    },
+    type: {
+      value: "File"
+    },
+    parentFolder: {
+      value: ""
+    },
+    extension: {
+      value: fileInfo.fileExtension
+    },
+    name: {
+      value: fileInfo.fileName
+    },
+    size: {
+      value: fileInfo.fileSize
+    },
+    base64: {
+      value: fileInfo.thumb64
+    },
+    history: {
+      value: setDefaultValueTable()
+    }
+  };
+  return bodyNewFile;
+}
 async function getRecordByFolder(limit, offset, parentFolder) {
   limit = limit || 500;
   offset = offset || 0;
@@ -35,7 +105,7 @@ async function getRecordByFolder(limit, offset, parentFolder) {
   let body = {
     app: kintone.app.getId(),
     query,
-    fields: ["parentFolder", "type", "base64", "name"],
+    fields: ["$id", "parentFolder", "type", "base64", "name"],
     totalCount: true
   };
   let listRecord = await kintone.api(kintone.api.url("/k/v1/records", true), "GET", body);
@@ -43,15 +113,15 @@ async function getRecordByFolder(limit, offset, parentFolder) {
 }
 
 function addRecord(record) {
-  var body = {
+  let body = {
     app: kintone.app.getId(),
     record
   };
-  kintone.api(kintone.api.url("/k/v1/record", true), "POST", body);
+  return kintone.api(kintone.api.url("/k/v1/record", true), "POST", body);
 }
 
 function updateRecord(event, record) {
-  var body = {
+  let body = {
     app: event.appId,
     id: event.recordId,
     record
@@ -95,7 +165,7 @@ function disableField(objFieldRecord, type) {
 function setValueAndUploadFile(event) {
   let fileType = event.record.type.value;
   if (fileType === "File") {
-    uploadFile(event);
+    updateFile(event);
   }
 }
 function uploadFileKey(blob, fileName) {
@@ -108,35 +178,31 @@ function convertFileToBase64(file) {
   return new kintone.Promise((resolve, reject) => {
     let reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = () => {
-      resolve(reader.result);
-    };
-    reader.onerror = reject;
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(error);
   });
 }
 function fillFileInfoToField(file, imgBase64) {
-  var fileInfo = setFileInformation(file, imgBase64);
-  var getRecordDetail = kintone.app.record.get();
-  var record = getRecordDetail.record;
+  let fileInfo = setFileInformation(file);
+  let getRecordDetail = kintone.app.record.get();
+  let record = getRecordDetail.record;
   record.name.value = fileInfo.fileName;
   record.size.value = fileInfo.fileSize;
   record.extension.value = fileInfo.fileExtension;
-  record.base64.value = fileInfo.thumb64;
+  record.base64.value = imgBase64;
   kintone.app.record.set(getRecordDetail);
 }
 
-function setFileInformation(file, imgBase64) {
-  var zeroIndex = 0;
-  var firstIndex = 1;
-  var fileName = file.name.split(".")[zeroIndex];
-  var fileExtension = file.name.split(".")[firstIndex];
-  var fileSize = file.size + " KB";
-  var thumb64 = imgBase64;
+function setFileInformation(file) {
+  let zeroIndex = 0;
+  let firstIndex = 1;
+  let fileName = file.name.split(".")[zeroIndex];
+  let fileExtension = file.name.split(".")[firstIndex];
+  let fileSize = file.size + " KB";
   return {
     fileName,
     fileExtension,
-    fileSize,
-    thumb64
+    fileSize
   };
 }
 async function handleFillFileInfoToField(file) {
@@ -160,15 +226,14 @@ function setValueFileHistory(record, event) {
 async function setValueFileAttachment(record) {
   let file = elmFileInput;
   if (file) {
-    record.file = {};
     let blob = new Blob([file], { type: file.type });
     let response = await uploadFileKey(blob, file.name);
     let fileKey = JSON.parse(response.result);
-    record.file.value = [fileKey];
+    record.file = { value: [fileKey] };
   }
   return record;
 }
-async function uploadFile(event) {
+async function updateFile(event) {
   let record = {};
   await setValueFileAttachment(record);
   setValueFileHistory(record, event);
@@ -179,13 +244,13 @@ async function uploadFile(event) {
 }
 function xmlHtppRequest(url, method, header, data) {
   return new kintone.Promise((resolve, reject) => {
-    var req = new XMLHttpRequest();
+    let req = new XMLHttpRequest();
     req.open(method, url, true);
     req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
     header ? (req.responseType = header) : "";
     req.onload = res => {
       if (res.target.status === 200) {
-        var result = res.target.response;
+        let result = res.target.response;
         resolve({ req, result });
       } else {
         reject("some thing error");
@@ -242,4 +307,4 @@ async function downloadFile(fileKey) {
   return newFileKey;
 }
 
-export { ultil };
+export { util };

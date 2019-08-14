@@ -1,4 +1,4 @@
-import Ultil from "../../ultil/index";
+import Ultil from "../../util/index";
 import { required } from "../../constant/index";
 import Icon from "../Icon";
 import Label from "../label";

@@ -2,25 +2,51 @@ import Folder from "../folder";
 import Label from "../label";
 import "./index.css";
 import File from "../file";
+import Spinner from "../spinner";
 
 class GridItem {
   constructor(props) {
     this.props = props;
-    this.gridItemLayout = document.createElement("div");
-    this.gridItem = document.createElement("div");
-  }
 
+    this.gridItemLayout = document.createElement("div");
+    this.gridItemLayout.className = "grid-item-layout " + this.props.className;
+
+    this.gridItem = document.createElement("div");
+    this.gridItem.className = "grid-item";
+
+    this.bindEventDragAndDrop();
+  }
+  bindEventDragAndDrop() {
+    if (this.gridItemLayout.className.includes("file")) {
+      this.gridItemLayout.addEventListener("dragover", this.handleDragOverFile);
+      this.gridItemLayout.addEventListener("drop", this.handleDropFile);
+    }
+  }
+  handleDropFile = async e => {
+    e.preventDefault();
+    var file = event.dataTransfer.files[0];
+    if (this.props.dropFile) {
+      let spinner = new Spinner();
+      spinner.showSpinner();
+      let responseGetAllRecord = await this.props.dropFile(file);
+      spinner.hideSpinner();
+      let newFile = responseGetAllRecord.records[0];
+      this.reRenderFile(newFile);
+    }
+  };
+
+  reRenderFile(newFile) {
+    newFile = this.setFileValue(newFile.name.value, newFile.base64.value).render();
+    this.gridItem.insertBefore(newFile, this.gridItem.childNodes[0]);
+  }
+  handleDragOverFile(event) {
+    event.preventDefault();
+  }
   renderItemGrid() {
     this.props.listItem.map(value => {
-      let image = "";
-      if (value.icon) {
-        image = value.icon;
-      } else {
-        image = value.thumbNail;
-      }
-      let item = this.renderFileOrFolder(value.name, image);
-
-      this.gridItem.className = "grid-item";
+      let name = value.name.value;
+      let image = value.base64.value;
+      let item = this.renderFileOrFolder(name, image);
       this.gridItem.appendChild(item);
       this.gridItemLayout.appendChild(this.gridItem);
     });
@@ -55,8 +81,6 @@ class GridItem {
     return item.render();
   }
   render() {
-    this.gridItemLayout.className = "grid-item-layout";
-
     let gridTitle = new Label({
       name: this.props.title,
       fontSize: "20px",

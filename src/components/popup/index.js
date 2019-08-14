@@ -68,7 +68,6 @@ class Popup {
         error.className = "error";
         this.elmNameAndInput.appendChild(error);
       }
-      console.log("a");
 
       return true;
     }

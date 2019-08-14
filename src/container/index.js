@@ -4,24 +4,36 @@ import Button from "../components/button/button";
 import Folder from "../components/folder";
 import GridItem from "../components/gridItem";
 import Popup from "../components/popup";
+import { util } from "../util";
 
 class Container {
-  constructor(props) {
-    this.props = props;
-    this.breadCrumb = new BreadCrumbs({
-      arrFolder: [{ id: 0, name: "abc" }, { id: 1, name: "def" }, { id: 2, name: "erg" }, { id: 3, name: "ccc" }],
-      onClick: this.selectedBreadCrumb
-    });
+  fetchData = async () => {
+    let responseRecord = await util.event.index.getRecordByFolder();
+    this.listRecord = [...responseRecord.records];
+    this.totalRecord = responseRecord.totalCount;
     this.containerGrid = document.createElement("div");
+    this.listFile = [];
+    this.listFolder = [];
+    this.setValueFileAndFolderList();
+    this.breadCrumb = new BreadCrumbs({
+      onClick: this.selectedBreadCrumb,
+      arrFolder: [{ id: 0, name: "abc" }, { id: 1, name: "def" }, { id: 2, name: "erg" }, { id: 3, name: "ccc" }]
+    });
     this.folderGrid = this.createFolderGrid();
     this.fileGrid = this.createFileGrid();
+  };
+  setValueFileAndFolderList() {
+    this.listRecord.map(record => {
+      if (record.type.value === "Folder") {
+        this.listFolder.push(record);
+      } else {
+        this.listFile.push(record);
+      }
+    });
   }
-
   selectedBreadCrumb = (folderId, arrFolder) => {};
 
-  createFolder(a) {
-    console.log(a);
-  }
+  createFolder(a) {}
 
   handleShowPopup() {
     let popupNewFolder = new Popup({
@@ -33,6 +45,7 @@ class Container {
   renderButton() {
     let btnWrap = document.createElement("div");
     btnWrap.className = "btn-wrap";
+
     let btnNewFolder = new Button({ name: "New Folder", onClick: () => this.handleShowPopup() });
     btnWrap.appendChild(btnNewFolder.render());
 
@@ -42,33 +55,22 @@ class Container {
     return btnWrap;
   }
   createFolderGrid() {
-    let arrNameFolder = [{ name: "A" }];
-
     let folderGrid = new GridItem({
-      listItem: arrNameFolder,
+      listItem: this.listFolder,
       type: "Folder",
-      title: "Folder"
+      title: "Folder",
+      className: "folder"
     });
 
     return folderGrid;
   }
   createFileGrid() {
-    let listItem = [
-      {
-        icon: "",
-        name: "hehe",
-        thumbNail: "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-      },
-      {
-        icon: "",
-        name: "hehe",
-        thumbNail: "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-      }
-    ];
     let fileGrid = new GridItem({
-      listItem,
+      listItem: this.listFile,
       type: "File",
-      title: "File"
+      title: "File",
+      className: "file",
+      dropFile: util.file.addFile
     });
     return fileGrid;
   }

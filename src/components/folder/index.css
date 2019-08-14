@@ -1,4 +1,4 @@
-.folder {
+.grid-item .folder {
   display: flex;
   align-self: center;
   width: calc(10% - 10px);
