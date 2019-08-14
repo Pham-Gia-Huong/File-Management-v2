@@ -5,6 +5,7 @@ import Folder from "../components/folder";
 import GridItem from "../components/gridItem";
 import Popup from "../components/popup";
 import { util } from "../util";
+import Spinner from "../components/spinner";
 
 class Container {
   fetchData = async () => {
@@ -64,13 +65,21 @@ class Container {
 
     return folderGrid;
   }
+  handleAddFile = async file => {
+    let spinner = new Spinner();
+    spinner.showSpinner();
+    let responseAllRecord = await util.file.addFile(file);
+    spinner.hideSpinner();
+    let newFile = responseAllRecord.records[0];
+    this.fileGrid.reRenderFile(newFile);
+  };
   createFileGrid() {
     let fileGrid = new GridItem({
       listItem: this.listFile,
       type: "File",
       title: "File",
       className: "file",
-      dropFile: util.file.addFile
+      onDropFile: this.handleAddFile
     });
     return fileGrid;
   }

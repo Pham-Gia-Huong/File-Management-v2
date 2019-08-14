@@ -19,21 +19,15 @@ class GridItem {
   bindEventDragAndDrop() {
     if (this.gridItemLayout.className.includes("file")) {
       this.gridItemLayout.addEventListener("dragover", this.handleDragOverFile);
-      this.gridItemLayout.addEventListener("drop", this.handleDropFile);
+      this.gridItemLayout.addEventListener("drop", event => {
+        event.preventDefault();
+        var file = event.dataTransfer.files[0];
+        if (file) {
+          this.props.onDropFile(file);
+        }
+      });
     }
   }
-  handleDropFile = async e => {
-    e.preventDefault();
-    var file = event.dataTransfer.files[0];
-    if (this.props.dropFile) {
-      let spinner = new Spinner();
-      spinner.showSpinner();
-      let responseGetAllRecord = await this.props.dropFile(file);
-      spinner.hideSpinner();
-      let newFile = responseGetAllRecord.records[0];
-      this.reRenderFile(newFile);
-    }
-  };
 
   reRenderFile(newFile) {
     newFile = this.setFileValue(newFile.name.value, newFile.base64.value).render();
@@ -71,6 +65,7 @@ class GridItem {
     };
     return new File(propsFile);
   }
+
   renderFileOrFolder(name, image) {
     let item = null;
     if (this.props.type === "Folder") {
@@ -80,6 +75,7 @@ class GridItem {
     }
     return item.render();
   }
+
   render() {
     let gridTitle = new Label({
       name: this.props.title,
