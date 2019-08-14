@@ -35,6 +35,7 @@ import InputFile from "./src/components/inputFile";
   });
 
   kintone.events.on("app.record.index.show", () => {
+    ultil.event.index.getRecordByFolder();
     let container = new Container();
     let containerGrid = document.getElementById("layout-grid");
     containerGrid.appendChild(container.render());

@@ -13,12 +13,34 @@ const ultil = {
       setValueAndUploadFile,
       getCurrentFileValue,
       handleFillFileInfoToField
+    },
+    index: {
+      getRecordByFolder
     }
   },
   breadcrumb: {}
 };
 let currentFileValue = {};
 let elmFileInput;
+
+async function getRecordByFolder(limit, offset, parentFolder) {
+  limit = limit || 500;
+  offset = offset || 0;
+  parentFolder = parentFolder || null;
+  let query = "";
+  if (parentFolder) {
+    query = `parentFolder ${parentFolder} limit ${limit} offset ${offset}`;
+  }
+  query = `limit ${limit} offset ${offset}`;
+  let body = {
+    app: kintone.app.getId(),
+    query,
+    fields: ["parentFolder", "type", "base64", "name"],
+    totalCount: true
+  };
+  let listRecord = await kintone.api(kintone.api.url("/k/v1/records", true), "GET", body);
+  return listRecord;
+}
 
 function addRecord(record) {
   var body = {

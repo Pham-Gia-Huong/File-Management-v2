@@ -1,10 +1,13 @@
 import Label from "../label";
 import Button from "../button/button";
+import { required } from "../../constant/";
 
 class Popup {
   constructor(props) {
     this.props = props;
     this.elmLayoutCenter = document.createElement("div");
+    this.elmInput = document.createElement("input");
+    this.elmNameAndInput = document.createElement("div");
   }
   hidePopupNewFolder() {
     document.body.removeChild(this.elmLayoutCenter);
@@ -23,7 +26,11 @@ class Popup {
     elmCloseIcon.addEventListener("click", () => this.hidePopupNewFolder());
     elmTitleAndIcon.appendChild(elmCloseIcon);
   }
-  renderPopupBtn(elmPopupContainer, inputValuePopup) {
+  handleCreateFolder(folderNameValue) {
+    let error = this.checkInputError();
+    if (!error) this.props.createFolder(folderNameValue);
+  }
+  renderPopupBtn(elmPopupContainer) {
     let elmCreateAndClose = document.createElement("div");
     elmCreateAndClose.className = "popup-create-close";
     elmPopupContainer.appendChild(elmCreateAndClose);
@@ -31,7 +38,7 @@ class Popup {
     let elmBtnCreate = new Button({
       name: "Create",
       style: { color: "black", background: "#dae8fc" },
-      onClick: () => this.props.handleCreateFolder(inputValuePopup.value)
+      onClick: () => this.handleCreateFolder(this.elmInput.value)
     });
     elmCreateAndClose.appendChild(elmBtnCreate.render());
 
@@ -42,18 +49,32 @@ class Popup {
     });
     elmCreateAndClose.appendChild(elmBtnClose.render());
   }
-  renderPopupInput(elmPopupContainer) {
-    let elmNameAndInput = document.createElement("div");
-    elmNameAndInput.className = "popup-input-name";
-    elmPopupContainer.appendChild(elmNameAndInput);
+  renderPopupInputAndName(elmPopupContainer) {
+    this.elmNameAndInput.className = "popup-input-name";
+    elmPopupContainer.appendChild(this.elmNameAndInput);
 
     let elmName = new Label({ name: "Name", fontSize: "14px" });
-    elmNameAndInput.appendChild(elmName.render());
+    this.elmNameAndInput.appendChild(elmName.render());
 
-    let elmInput = document.createElement("input");
-    elmNameAndInput.appendChild(elmInput);
-    return { elmInput };
+    this.elmNameAndInput.appendChild(this.elmInput);
   }
+  checkInputError() {
+    if (!this.elmInput.value) {
+      let error = document.createElement("div");
+      let elmChildLast = this.elmNameAndInput.children.length - 1;
+      let elmError = this.elmNameAndInput.children[elmChildLast];
+      if (elmError.textContent !== required) {
+        error.textContent = required;
+        error.className = "error";
+        this.elmNameAndInput.appendChild(error);
+      }
+      console.log("a");
+
+      return true;
+    }
+    return false;
+  }
+
   render() {
     this.elmLayoutCenter.className = "layout-center";
 
@@ -62,8 +83,8 @@ class Popup {
     this.elmLayoutCenter.appendChild(elmPopupContainer);
 
     this.renderPopupTitleAndIcon(elmPopupContainer);
-    let inputValuePopup = this.renderPopupInput(elmPopupContainer);
-    this.renderPopupBtn(elmPopupContainer, inputValuePopup.elmInput);
+    this.renderPopupInputAndName(elmPopupContainer);
+    this.renderPopupBtn(elmPopupContainer);
 
     return this.elmLayoutCenter;
   }

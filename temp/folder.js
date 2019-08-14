@@ -94,6 +94,7 @@ class Folder {
   isExistInputValue(valueFolderName) {
     return valueFolderName ? true : false;
   }
+
   async handleNewFolder(elmInputName, elmNameAndInput) {
     let folderValue = {
       name: {
@@ -113,6 +114,7 @@ class Folder {
     await this.ultil.addRecord(folderValue);
     this.ultil.hideSpinner();
   }
+
   hidePopupNewFolder() {
     let menuSpace = kintone.app.getHeaderMenuSpaceElement();
     menuSpace.removeChild(this.ui.elmLayoutCenter);

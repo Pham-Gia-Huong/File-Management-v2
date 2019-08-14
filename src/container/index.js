@@ -18,13 +18,14 @@ class Container {
   }
 
   selectedBreadCrumb = (folderId, arrFolder) => {};
-  handleCreateFolder(a) {
+
+  createFolder(a) {
     console.log(a);
   }
 
   handleShowPopup() {
     let popupNewFolder = new Popup({
-      handleCreateFolder: this.handleCreateFolder,
+      createFolder: this.createFolder,
       handleClosePopup: this.handleClosePopup
     });
     document.body.appendChild(popupNewFolder.render());
@@ -56,14 +57,12 @@ class Container {
       {
         icon: "",
         name: "hehe",
-        thumbNail:
-          "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+        thumbNail: "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
       },
       {
         icon: "",
         name: "hehe",
-        thumbNail:
-          "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+        thumbNail: "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
       }
     ];
     let fileGrid = new GridItem({
