@@ -4,4 +4,9 @@
   width: calc(10% - 10px);
   margin-right: 10px;
   cursor: pointer;
+  padding: 10px;
+}
+.selected {
+  background: #e8f0fe !important;
+  color: black !important;
 }

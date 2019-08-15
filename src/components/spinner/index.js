@@ -1,8 +1,9 @@
 class Spinner {
   constructor() {
-    this.spinnerWrapper = document.createElement("div");
+    this.spinnerWrapper;
   }
   showSpinner() {
+    this.spinnerWrapper = document.createElement("div");
     this.spinnerWrapper.className = "layout-center";
 
     let spinner = document.createElement("div");

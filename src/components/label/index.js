@@ -2,18 +2,21 @@ import "./index.css";
 
 class Label {
   constructor(props) {
-    this.props = props;
+    this.propClass = props.className;
+    this.propName = props.name;
+    this.propSize = props.fontSize;
+    this.propWeight = props.fontWeight;
   }
   render() {
     let propsClass = "";
-    if (this.props.className) {
-      propsClass = this.props.className;
+    if (this.propClass) {
+      propsClass = this.propClass;
     }
     let label = document.createElement("label");
-    label.textContent = this.props.name;
+    label.textContent = this.propName;
     label.className = "label " + propsClass;
-    label.style.fontSize = this.props.fontSize;
-    label.style.fontWeight = this.props.fontWeight;
+    label.style.fontSize = this.propSize;
+    label.style.fontWeight = this.propWeight;
     return label;
   }
 }

@@ -1,12 +1,12 @@
 import "./index.css";
 class Icon {
   constructor(props) {
-    this.props = props;
+    this.propIcon = props.icon;
   }
 
   render() {
     let icon = document.createElement("div");
-    icon.className = this.props.icon + " icon ";
+    icon.className = this.propIcon + " icon ";
 
     return icon;
   }

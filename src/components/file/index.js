@@ -3,41 +3,57 @@ import "./index.css";
 import Icon from "../Icon";
 class File {
   constructor(props) {
-    this.props = props;
-    this.fileName = new Label({ name: this.props.name, className: "file-label" });
+    this.propsName = props.name;
+    this.propsType = props.type;
+    this.propsImage = props.image;
+    this.propHeight = props.height;
+    this.propsWidth = props.width;
+    this.fileLayout;
+    this.fileName = new Label({ name: props.name, className: "file-label" });
   }
-  handleSelectedFile(fileLayout) {
-    let parentFileLayout = fileLayout.parentNode.children;
+  handleSelectedFile() {
+    let parentFileLayout = this.fileLayout.parentNode.children;
     for (let i = 0; i < parentFileLayout.length; i++) {
       let currentLabelFileItem = parentFileLayout[i].children[0].children[1];
-      if (parentFileLayout[i] === fileLayout) {
-        currentLabelFileItem.classList.add("selected-file");
+      if (parentFileLayout[i] === this.fileLayout) {
+        currentLabelFileItem.classList.add("selected");
       } else {
-        currentLabelFileItem.classList.remove("selected-file");
+        currentLabelFileItem.classList.remove("selected");
       }
     }
   }
+
+  handleUnSelect() {
+    let parentFileLayout = this.fileLayout.parentNode.children;
+    for (let i = 0; i < parentFileLayout.length; i++) {
+      let currentLabelFileItem = parentFileLayout[i].children[0].children[1];
+      currentLabelFileItem.classList.remove("selected");
+    }
+  }
   render() {
-    let fileLayout = document.createElement("div");
-    fileLayout.className = "file-layout";
+    this.fileLayout = document.createElement("div");
+    this.fileLayout.className = "file-layout";
+    this.fileLayout.setAttribute("tabIndex", "-1");
+    this.fileLayout.onblur = () => this.handleUnSelect();
 
     let fileItem = document.createElement("div");
+    fileItem.draggable = true;
     fileItem.className = "file-item";
     let fileImage = "";
     let elmFileImage = "";
 
-    if (this.props.type !== "default") {
+    if (this.propsType !== "default") {
       fileImage = new Icon({
-        icon: this.props.image,
+        icon: this.propsImage,
         fontSize: "50px"
       });
 
       elmFileImage = fileImage.render();
     } else {
       fileImage = document.createElement("img");
-      fileImage.src = this.props.image;
-      fileImage.width = this.props.width;
-      fileImage.height = this.props.height;
+      fileImage.src = this.propsImage;
+      fileImage.width = this.propsWidth;
+      fileImage.height = this.propHeight;
       elmFileImage = fileImage;
     }
 
@@ -45,9 +61,9 @@ class File {
     let elmFileName = this.fileName.render();
     fileItem.appendChild(elmFileName);
 
-    fileItem.onclick = () => this.handleSelectedFile(fileLayout);
-    fileLayout.appendChild(fileItem);
-    return fileLayout;
+    fileItem.onclick = () => this.handleSelectedFile();
+    this.fileLayout.appendChild(fileItem);
+    return this.fileLayout;
   }
 }
 export default File;

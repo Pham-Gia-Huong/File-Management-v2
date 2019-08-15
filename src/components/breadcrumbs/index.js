@@ -1,17 +1,41 @@
 import "./index.css";
 class BreadCrumbs {
   constructor(props) {
-    this.props = props;
+    this.listBreadCrumb = [...props.listBreadCrumb];
+    this.propOnSelected = props.onSelected;
     this.breadCrumbWrapper = document.createElement("div");
   }
-  setListFolder(folderId) {
-    let indexFolder = this.props.arrFolder.findIndex(folder => folder.id === folderId);
-    let lastIndex = this.props.arrFolder.length - 1;
-    if (lastIndex === indexFolder) {
-      return;
+  getCurrentBreadCrumb() {
+    return this.listBreadCrumb[this.listBreadCrumb.length - 1];
+  }
+  reRenderBreadCrumb(listBreadCrumb) {
+    this.resetBreadCrumb();
+    this.listBreadCrumb = listBreadCrumb;
+    this.renderItemBreadCrumb();
+    this.removeLastArrow();
+  }
+  resetBreadCrumb() {
+    let childBreadcrumb = this.breadCrumbWrapper.children;
+    for (let i = childBreadcrumb.length - 1; i >= 0; i--) {
+      this.breadCrumbWrapper.removeChild(childBreadcrumb[i]);
     }
-    let newlistFolder = this.props.arrFolder.slice(0, indexFolder + 1);
-    return newlistFolder;
+  }
+  // setListFolder(folderId) {
+  //   let indexFolder = this.listBreadCrumb.findIndex(folder => folder.id === folderId);
+  //   let lastIndex = this.listBreadCrumb.length - 1;
+  //   if (lastIndex === indexFolder) {
+  //     return;
+  //   }
+  //   this.listBreadCrumb = this.listBreadCrumb.slice(0, indexFolder + 1);
+  // }
+  removeLastArrow() {
+    let elmChildWrap = this.breadCrumbWrapper.children;
+
+    let elmLastArrow = elmChildWrap[elmChildWrap.length - 1];
+    let isLastArrowExist = elmLastArrow && elmLastArrow.children[1];
+    if (isLastArrowExist) {
+      elmLastArrow.removeChild(elmLastArrow.children[1]);
+    }
   }
   removeBreadCrumb(elmNameAndArrow) {
     let indexElement = [...this.breadCrumbWrapper.children].indexOf(elmNameAndArrow);
@@ -21,49 +45,45 @@ class BreadCrumbs {
         this.breadCrumbWrapper.removeChild(elmChildWrap[i]);
       }
     }
-    let elmLastArrow = elmChildWrap[elmChildWrap.length - 1];
-    let isLastArrowExist = elmLastArrow && elmLastArrow.children[1];
-    if (isLastArrowExist) {
-      elmLastArrow.removeChild(elmLastArrow.children[1]);
-    }
+    this.removeLastArrow();
   }
-  handleSelected(elmNameAndArrow, folderId) {
-    this.removeBreadCrumb(elmNameAndArrow);
-    this.setListFolder(folderId);
+  handleSelected(elmNameAndArrow, breadCrumId) {
+    this.removeBreadCrumb(elmNameAndArrow, breadCrumId);
+    this.propOnSelected(breadCrumId);
   }
 
-  renderArrowDom(nameAndArrow, folder, elmFolderName) {
-    nameAndArrow.appendChild(elmFolderName);
+  renderArrowDom(nameAndArrow, folder) {
     let arrowRight = document.createElement("div");
     arrowRight.textContent = ">";
-    let isNotLastElm = folder.id !== this.props.arrFolder.length - 1;
+
+    let isNotLastElm = folder.id !== this.listBreadCrumb.length - 1;
     if (isNotLastElm) {
       nameAndArrow.appendChild(arrowRight);
     }
   }
 
   renderItemBreadCrumb() {
-    if (this.props.arrFolder && this.props.arrFolder.length === 0) {
+    if (this.listBreadCrumb && this.listBreadCrumb.length === 0) {
       return;
     }
-    this.props.arrFolder.map(folder => {
+    this.listBreadCrumb.map(breadCrumb => {
       let nameAndArrow = document.createElement("div");
       nameAndArrow.className = "name-arrow";
 
       let elmFolderName = document.createElement("div");
       elmFolderName.className = "bread-crumb-name";
-      elmFolderName.textContent = folder.name;
+      elmFolderName.textContent = breadCrumb.name;
+      nameAndArrow.appendChild(elmFolderName);
 
-      this.renderArrowDom(nameAndArrow, folder, elmFolderName);
+      this.renderArrowDom(nameAndArrow, breadCrumb);
 
-      elmFolderName.onclick = () => this.handleSelected(nameAndArrow, folder.id);
+      elmFolderName.onclick = () => this.handleSelected(nameAndArrow, breadCrumb.id);
       this.breadCrumbWrapper.appendChild(nameAndArrow);
     });
   }
   render() {
     this.breadCrumbWrapper.className = "bread-crumb-wrap";
     this.renderItemBreadCrumb();
-
     return this.breadCrumbWrapper;
   }
 }

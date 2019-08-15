@@ -15,14 +15,35 @@ const util = {
       handleFillFileInfoToField
     },
     index: {
-      getRecordByFolder
+      getAllRecord
     }
+  },
+  folder: {
+    createFolder
   },
   breadcrumb: {},
   file: { addFile }
 };
 let currentFileValue = {};
 let elmFileInput;
+
+async function createFolder(folderName, parentFolder = "") {
+  let folderValue = {
+    name: {
+      value: folderName
+    },
+    type: {
+      value: "Folder"
+    },
+    parentFolder: {
+      value: parentFolder
+    }
+  };
+  await addRecord(folderValue);
+  let responseRecord = await getAllRecord();
+  folderName = responseRecord.records[0].name.value;
+  return folderName;
+}
 function setDefaultValueTable() {
   let historyTable = [
     {
@@ -44,7 +65,7 @@ function setDefaultValueTable() {
   ];
   return historyTable;
 }
-async function addFile(file) {
+async function addFile(file, parentFolder) {
   if (file) {
     try {
       let fileInfo = setFileInformation(file);
@@ -54,16 +75,16 @@ async function addFile(file) {
       fileInfo.fileKey = [JSON.parse(fileKey)];
       let base64 = await convertFileToBase64(file);
       fileInfo.thumb64 = base64;
-      let bodyNewFile = setNewValueFile(fileInfo);
+      let bodyNewFile = setNewValueFile(fileInfo, parentFolder);
       await addRecord(bodyNewFile);
-      let listRecord = await getRecordByFolder();
+      let listRecord = await getAllRecord();
       return listRecord;
     } catch (e) {
       console.error(e);
     }
   }
 }
-function setNewValueFile(fileInfo) {
+function setNewValueFile(fileInfo, parentFolder) {
   // showSpinner();
   let bodyNewFile = {
     file: {
@@ -73,7 +94,7 @@ function setNewValueFile(fileInfo) {
       value: "File"
     },
     parentFolder: {
-      value: ""
+      value: parentFolder
     },
     extension: {
       value: fileInfo.fileExtension
@@ -93,15 +114,12 @@ function setNewValueFile(fileInfo) {
   };
   return bodyNewFile;
 }
-async function getRecordByFolder(limit, offset, parentFolder) {
-  limit = limit || 500;
-  offset = offset || 0;
-  parentFolder = parentFolder || null;
+async function getAllRecord(parentFolder = null, limit = 500, offset = 0) {
   let query = "";
-  if (parentFolder) {
-    query = `parentFolder ${parentFolder} limit ${limit} offset ${offset}`;
-  }
   query = `limit ${limit} offset ${offset}`;
+  if (parentFolder) {
+    query = `parentFolder like ${parentFolder} limit ${limit} offset ${offset}`;
+  }
   let body = {
     app: kintone.app.getId(),
     query,
@@ -155,7 +173,7 @@ function disableField(objFieldRecord, type) {
     if (!objFieldRecord.hasOwnProperty(key)) {
       return;
     }
-    if (key != "comment" && key != "date") {
+    if (key != "comment" && key != "date" && key != "parentFolder") {
       const record = objFieldRecord[key];
       record.disabled = true;
     }
@@ -307,4 +325,9 @@ async function downloadFile(fileKey) {
   return newFileKey;
 }
 
-export { util };
+async function getListRecordByFolderId(id) {
+  let listRecord = await getAllRecord(id);
+  let newListRecord = listRecord.records.filter(record => record.parentFolder.value === id);
+  return newListRecord;
+}
+export { util, getListRecordByFolderId };

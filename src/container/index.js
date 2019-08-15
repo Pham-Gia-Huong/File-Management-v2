@@ -4,46 +4,50 @@ import Button from "../components/button/button";
 import Folder from "../components/folder";
 import GridItem from "../components/gridItem";
 import Popup from "../components/popup";
-import { util } from "../util";
+import { util, getListRecordByFolderId } from "../util";
 import Spinner from "../components/spinner";
 
 class Container {
   fetchData = async () => {
-    let responseRecord = await util.event.index.getRecordByFolder();
-    this.listRecord = [...responseRecord.records];
+    let responseRecord = await util.event.index.getAllRecord();
+    this.listRecord = responseRecord.records;
     this.totalRecord = responseRecord.totalCount;
     this.containerGrid = document.createElement("div");
-    this.listFile = [];
-    this.listFolder = [];
-    this.setValueFileAndFolderList();
+    this.listFile = this.listRecord.filter(record => record.type.value === "File");
+    this.listFolder = this.listRecord.filter(record => record.type.value === "Folder");
+    this.listBreadCrumb = [];
     this.breadCrumb = new BreadCrumbs({
-      onClick: this.selectedBreadCrumb,
-      arrFolder: [{ id: 0, name: "abc" }, { id: 1, name: "def" }, { id: 2, name: "erg" }, { id: 3, name: "ccc" }]
+      onSelected: this.selectedBreadCrumb,
+      listBreadCrumb: []
     });
+    this.spinner = new Spinner();
     this.folderGrid = this.createFolderGrid();
     this.fileGrid = this.createFileGrid();
+    this.popupNewFolder;
   };
-  setValueFileAndFolderList() {
-    this.listRecord.map(record => {
-      if (record.type.value === "Folder") {
-        this.listFolder.push(record);
-      } else {
-        this.listFile.push(record);
-      }
-    });
-  }
-  selectedBreadCrumb = (folderId, arrFolder) => {};
 
-  createFolder(a) {}
+  selectedBreadCrumb = async breadCrumbId => {
+    let indexBreadCrumb = this.listBreadCrumb.findIndex(breadCrumb => breadCrumb.id === breadCrumbId);
+    let newListBreadCrumb = this.listBreadCrumb.slice(0, indexBreadCrumb + 1);
+    this.listBreadCrumb = newListBreadCrumb;
+    await this.renderGridItemByFolderClick(breadCrumbId);
+  };
+  handleCreateFolder = async folderName => {
+    let parentFolder = this.breadCrumb.getCurrentBreadCrumb() ? this.breadCrumb.getCurrentBreadCrumb().id : "";
+    this.popupNewFolder.hidePopupNewFolder();
+    this.spinner.showSpinner();
+    folderName = await util.folder.createFolder(folderName, parentFolder);
 
+    this.spinner.hideSpinner();
+    this.folderGrid.reRenderFolder(folderName);
+  };
   handleShowPopup() {
-    let popupNewFolder = new Popup({
-      createFolder: this.createFolder,
-      handleClosePopup: this.handleClosePopup
+    this.popupNewFolder = new Popup({
+      createFolder: this.handleCreateFolder
     });
-    document.body.appendChild(popupNewFolder.render());
+    document.body.appendChild(this.popupNewFolder.render());
   }
-  renderButton() {
+  createButton() {
     let btnWrap = document.createElement("div");
     btnWrap.className = "btn-wrap";
 
@@ -55,24 +59,45 @@ class Container {
 
     return btnWrap;
   }
+  addBreadCrumb(id, name) {
+    this.listBreadCrumb.push({ id, name });
+    this.breadCrumb.reRenderBreadCrumb(this.listBreadCrumb);
+  }
+  async renderGridItemByFolderClick(id) {
+    this.spinner.showSpinner();
+    let listRecord = await getListRecordByFolderId(id);
+    this.listFolder = listRecord.filter(folder => folder.type.value === "Folder");
+    this.listFile = listRecord.filter(folder => folder.type.value === "File");
+    this.folderGrid.reRenderFolder(this.listFolder, "list");
+    this.fileGrid.reRenderFile(this.listFile, "list");
+    this.spinner.hideSpinner();
+  }
+  handleOpenFolder = async (id, name) => {
+    this.addBreadCrumb(id, name);
+    await this.renderGridItemByFolderClick(id);
+    // await this.renderFileByFolderClick(id);
+  };
   createFolderGrid() {
     let folderGrid = new GridItem({
       listItem: this.listFolder,
       type: "Folder",
       title: "Folder",
-      className: "folder"
+      className: "folder",
+      handleOpenFolder: this.handleOpenFolder
     });
 
     return folderGrid;
   }
+
   handleAddFile = async file => {
-    let spinner = new Spinner();
-    spinner.showSpinner();
-    let responseAllRecord = await util.file.addFile(file);
-    spinner.hideSpinner();
+    let parentFolder = this.breadCrumb.getCurrentBreadCrumb() ? this.breadCrumb.getCurrentBreadCrumb().id : "";
+    this.spinner.showSpinner();
+    let responseAllRecord = await util.file.addFile(file, parentFolder);
+    this.spinner.hideSpinner();
     let newFile = responseAllRecord.records[0];
     this.fileGrid.reRenderFile(newFile);
   };
+
   createFileGrid() {
     let fileGrid = new GridItem({
       listItem: this.listFile,
@@ -87,8 +112,7 @@ class Container {
     this.containerGrid.className = "container-grid";
     this.containerGrid.appendChild(this.breadCrumb.render());
 
-    let btnGrid = this.renderButton();
-    this.containerGrid.appendChild(btnGrid);
+    this.containerGrid.appendChild(this.createButton());
 
     this.containerGrid.appendChild(this.folderGrid.render());
 

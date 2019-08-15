@@ -17,6 +17,7 @@
   overflow: hidden;
   cursor: pointer;
 }
-.selected-file {
-  background: gray !important;
+.selected {
+  background: #e8f0fe !important;
+  color: black !important;
 }

@@ -13,8 +13,9 @@ import Spinner from "./src/components/spinner";
     let objFieldRecord = event.record;
     let recordType = objFieldRecord.type.value;
     if (recordType === "Folder") {
-      util.js.hideFieldRecord(["parentFolder", "file", "extension", "size", "comment", "history", "b64", "date"]);
-      return;
+      util.js.hideFieldRecord(["parentFolder", "file", "extension", "size", "comment", "history", "base64", "date"]);
+    } else {
+      util.js.hideFieldRecord(["base64"]);
     }
   });
   kintone.events.on("app.record.edit.show", function(event) {
@@ -26,7 +27,7 @@ import Spinner from "./src/components/spinner";
     util.js.disableHistory(arrHistory);
     if (recordType === "File") {
       let inputFile = new InputFile({ onChange: util.event.edit.handleFillFileInfoToField });
-      util.js.hideFieldRecord(["b64", "file"]);
+      util.js.hideFieldRecord(["base64", "file"]);
       elmSpace.appendChild(inputFile.render());
       util.event.edit.getCurrentFileValue(objFieldRecord, arrHistory);
     } else {
@@ -35,7 +36,10 @@ import Spinner from "./src/components/spinner";
     return event;
   });
 
-  kintone.events.on("app.record.index.show", () => {
+  kintone.events.on("app.record.index.show", event => {
+    if (event.viewName != "Grid") {
+      return;
+    }
     let container = new Container();
     let spinner = new Spinner();
     let containerGrid = document.getElementById("layout-grid");
