@@ -47,9 +47,17 @@ class BreadCrumbs {
     }
     this.removeLastArrow();
   }
+  addBreadCrumb(id, name) {
+    this.listBreadCrumb.push({ id, name });
+    this.reRenderBreadCrumb(this.listBreadCrumb);
+  }
   handleSelected(elmNameAndArrow, breadCrumId) {
     this.removeBreadCrumb(elmNameAndArrow, breadCrumId);
-    this.propOnSelected(breadCrumId);
+    let indexBreadCrumb = this.listBreadCrumb.findIndex(breadCrumb => breadCrumb.id === breadCrumId);
+    let newListBreadCrumb = this.listBreadCrumb.slice(0, indexBreadCrumb + 1);
+    this.listBreadCrumb = newListBreadCrumb;
+    let currentBreadCrumb = this.getCurrentBreadCrumb();
+    this.propOnSelected(currentBreadCrumb);
   }
 
   renderArrowDom(nameAndArrow, folder) {
