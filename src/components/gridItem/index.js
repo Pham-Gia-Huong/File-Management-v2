@@ -13,7 +13,8 @@ class GridItem {
     this.gridItemLayout.className = "grid-item-layout " + props.className;
     this.gridItem = document.createElement("div");
     this.gridItem.className = "grid-item";
-
+    this.propOnSelecFile = props.onSelectFile;
+    this.propOnDropFolder = props.onDropFolder;
     this.bindEventDragAndDrop();
   }
   bindEventDragAndDrop() {
@@ -83,17 +84,21 @@ class GridItem {
     let propsFolder = {
       name,
       id,
-      openFolder: this.propHandleOpenFolder
+      openFolder: this.propHandleOpenFolder,
+      onDrop: this.propOnDropFolder
     };
     return new Folder(propsFolder);
   }
-  setFileValue(name, image) {
+
+  setFileValue(name, image, id) {
     let propsFile = {
+      id,
       name,
       image,
       type: "default",
       width: 200,
-      height: 200
+      height: 200,
+      onSelect: this.propOnSelecFile
     };
     return new File(propsFile);
   }

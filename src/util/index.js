@@ -22,12 +22,40 @@ const util = {
     createFolder
   },
   breadcrumb: {},
-  file: { addFile }
+  file: { addFile, uploadFileDrop }
 };
 let currentFileValue = {};
 let elmFileInput;
 
-async function createFolder(folderName, parentFolder = "") {
+async function uploadFileDrop(parentFolder, listRecordId, currentParentFolder) {
+  let records = setValueFolderRecord(parentFolder, listRecordId);
+  await updateMultiRecord(records);
+  let responListRecord = await getAllRecord(currentParentFolder);
+  let listRecord = responListRecord.records;
+  return listRecord;
+}
+function updateMultiRecord(records) {
+  let body = {
+    app: kintone.app.getId(),
+    records
+  };
+  return kintone.api(kintone.api.url("/k/v1/records", true), "PUT", body);
+}
+function setValueFolderRecord(parentFolder, listRecordId) {
+  let records = [];
+  listRecordId.map(id => {
+    records.push({
+      id,
+      record: {
+        parentFolder: {
+          value: parentFolder
+        }
+      }
+    });
+  });
+  return records;
+}
+async function createFolder(folderName, parentFolder) {
   let folderValue = {
     name: {
       value: folderName
@@ -40,7 +68,7 @@ async function createFolder(folderName, parentFolder = "") {
     }
   };
   await addRecord(folderValue);
-  let responseRecord = await getAllRecord();
+  let responseRecord = await getAllRecord(parentFolder);
   folderName = responseRecord.records[0].name.value;
   return folderName;
 }
@@ -77,7 +105,7 @@ async function addFile(file, parentFolder) {
       fileInfo.thumb64 = base64;
       let bodyNewFile = setNewValueFile(fileInfo, parentFolder);
       await addRecord(bodyNewFile);
-      let listRecord = await getAllRecord();
+      let listRecord = await getAllRecord(parentFolder);
       return listRecord;
     } catch (e) {
       console.error(e);
@@ -114,11 +142,11 @@ function setNewValueFile(fileInfo, parentFolder) {
   };
   return bodyNewFile;
 }
-async function getAllRecord(parentFolder = null, limit = 500, offset = 0) {
+async function getAllRecord(parentFolder = "0", limit = 500, offset = 0) {
   let query = "";
   query = `limit ${limit} offset ${offset}`;
   if (parentFolder) {
-    query = `parentFolder like ${parentFolder} limit ${limit} offset ${offset}`;
+    query = `parentFolder = "${parentFolder}" limit ${limit} offset ${offset}`;
   }
   let body = {
     app: kintone.app.getId(),
@@ -140,7 +168,7 @@ function addRecord(record) {
 
 function updateRecord(event, record) {
   let body = {
-    app: event.appId,
+    app: kintone.app.getId(),
     id: event.recordId,
     record
   };
@@ -330,4 +358,4 @@ async function getListRecordByFolderId(id) {
   let newListRecord = listRecord.records.filter(record => record.parentFolder.value === id);
   return newListRecord;
 }
-export { util, getListRecordByFolderId };
+export { util, getListRecordByFolderId, uploadFileDrop };

@@ -8,7 +8,9 @@ class File {
     this.propsImage = props.image;
     this.propHeight = props.height;
     this.propsWidth = props.width;
+    this.propId = props.id;
     this.fileLayout;
+    this.propOnSelect = props.onSelect;
     this.fileName = new Label({ name: props.name, className: "file-label" });
   }
   handleSelectedFile() {
@@ -21,6 +23,7 @@ class File {
         currentLabelFileItem.classList.remove("selected");
       }
     }
+    this.propOnSelect(this.propId);
   }
 
   handleUnSelect() {

@@ -13,7 +13,7 @@ class Folder {
     this.icon = new Icon({
       icon: "fas fa-folder"
     });
-
+    this.propOnDrop = props.onDrop;
     this.folderName = new Label({ name: props.name, fontSize: "20px" });
   }
   handleSelectFolder(fileLayout) {
@@ -40,11 +40,12 @@ class Folder {
   handleDragOver(event) {
     event.preventDefault();
   }
-  handleDrop(event) {
+  handleDrop = event => {
     event.preventDefault();
-    let files = event.dataTransfer.files[0];
-    console.log(files);
-  }
+
+    // let files = event.dataTransfer.files[0];
+    this.propOnDrop(this.propsId);
+  };
   render() {
     let folder = document.createElement("div");
     folder.className = "folder";
