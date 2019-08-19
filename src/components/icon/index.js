@@ -1,14 +1,16 @@
 import "./index.css";
 class Icon {
   constructor(props) {
-    this.propIcon = props.icon;
+    this.icon = props.icon;
+    this.elmIcon = document.createElement("div");
   }
-
+  setAttribute(name, value) {
+    this.elmIcon.setAttribute(name, value);
+  }
   render() {
-    let icon = document.createElement("div");
-    icon.className = this.propIcon + " icon ";
+    this.elmIcon.className = this.icon + " icon ";
 
-    return icon;
+    return this.elmIcon;
   }
 }
 export default Icon;

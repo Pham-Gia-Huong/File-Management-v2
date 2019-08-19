@@ -7,7 +7,14 @@ module.exports = {
   watch: true,
   output: {
     path: path.resolve(__dirname, "build"),
-    filename: "bundle.js"
+    filename: "[name].bundle.js"
+  },
+  optimization: {
+    splitChunks: {
+      minSize: 25000,
+      maxSize: 90000,
+      chunks: "all"
+    }
   },
   devtool: "eval-source-map",
   module: {

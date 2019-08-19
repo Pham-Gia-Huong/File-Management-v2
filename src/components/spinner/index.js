@@ -6,9 +6,9 @@ class Spinner {
     this.spinnerWrapper = document.createElement("div");
     this.spinnerWrapper.className = "layout-center";
 
-    let spinner = document.createElement("div");
-    spinner.className = "lds-dual-ring";
-    this.spinnerWrapper.appendChild(spinner);
+    this.spinner = document.createElement("div");
+    this.spinner.className = "lds-dual-ring";
+    this.spinnerWrapper.appendChild(this.spinner);
 
     document.body.appendChild(this.spinnerWrapper);
   }

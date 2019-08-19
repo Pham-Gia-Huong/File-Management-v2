@@ -4,7 +4,7 @@ import { required } from "../../constant/";
 
 class Popup {
   constructor(props) {
-    this.propCreateFolder = props.createFolder;
+    this.createFolder = props.createFolder;
     this.elmLayoutCenter = document.createElement("div");
     this.elmInput = document.createElement("input");
     this.elmNameAndInput = document.createElement("div");
@@ -28,7 +28,7 @@ class Popup {
   }
   handleCreateFolder(folderNameValue) {
     let error = this.checkInputError();
-    if (!error) this.propCreateFolder(folderNameValue);
+    if (!error) this.createFolder(folderNameValue);
   }
   renderPopupBtn(elmPopupContainer) {
     let elmCreateAndClose = document.createElement("div");

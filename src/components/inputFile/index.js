@@ -1,6 +1,6 @@
 class InputFile {
   constructor(props) {
-    this.propOnchange = props.onChange;
+    this.onChange = props.onChange;
     this.elmFileInput = {};
   }
   render() {
@@ -17,7 +17,7 @@ class InputFile {
     this.elmFileInput.accept = ".xls,.xlsx,.png,.jpg,.jpeg,.pdf,.doc";
     elmWrap.appendChild(this.elmFileInput);
 
-    this.elmFileInput.addEventListener("change", () => this.propOnchange(this.elmFileInput.files[0]));
+    this.elmFileInput.addEventListener("change", () => this.onChange(this.elmFileInput.files[0]));
     return elmWrap;
   }
 }

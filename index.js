@@ -1,21 +1,28 @@
 import "./index.css";
 import Container from "./src/container";
-import "./lib/fontAwesome";
-import { util } from "./src/util";
+import {
+  hideFieldRecord,
+  setValueAndUploadFile,
+  disableField,
+  disableHistory,
+  getCurrentFileValue,
+  handleFillFileInfoToField
+} from "./src/util";
 import InputFile from "./src/components/inputFile";
 import Spinner from "./src/components/spinner";
 
 (function() {
-  kintone.events.on("app.record.edit.submit.success", event => {
-    util.event.edit.setValueAndUploadFile(event);
+  kintone.events.on("app.record.edit.submit.success", async event => {
+    await setValueAndUploadFile(event);
+    setTimeout(() => location.reload(), 1000);
   });
   kintone.events.on("app.record.detail.show", event => {
     let objFieldRecord = event.record;
     let recordType = objFieldRecord.type.value;
     if (recordType === "Folder") {
-      util.js.hideFieldRecord(["parentFolder", "file", "extension", "size", "comment", "history", "base64", "date"]);
+      hideFieldRecord(["parentFolder", "file", "extension", "size", "comment", "history", "base64", "date"]);
     } else {
-      util.js.hideFieldRecord(["base64"]);
+      hideFieldRecord(["base64"]);
     }
   });
   kintone.events.on("app.record.edit.show", function(event) {
@@ -23,15 +30,15 @@ import Spinner from "./src/components/spinner";
     let objFieldRecord = event.record;
     let recordType = objFieldRecord.type.value;
     let arrHistory = event.record.history.value;
-    util.js.disableField(objFieldRecord, recordType);
-    util.js.disableHistory(arrHistory);
+    disableField(objFieldRecord, recordType);
+    disableHistory(arrHistory);
     if (recordType === "File") {
-      let inputFile = new InputFile({ onChange: util.event.edit.handleFillFileInfoToField });
-      util.js.hideFieldRecord(["base64", "file"]);
+      let inputFile = new InputFile({ onChange: handleFillFileInfoToField });
+      hideFieldRecord(["base64", "file", "parentFolder"]);
       elmSpace.appendChild(inputFile.render());
-      util.event.edit.getCurrentFileValue(objFieldRecord, arrHistory);
+      getCurrentFileValue(objFieldRecord, arrHistory);
     } else {
-      util.js.hideFieldRecord(["parentFolder", "file", "extension", "size", "comment", "history", "base64", "date", "type"]);
+      hideFieldRecord(["parentFolder", "file", "extension", "size", "comment", "history", "base64", "date", "type"]);
     }
     return event;
   });

@@ -1,4 +1,3 @@
-import Ultil from "../../util/index";
 import { required } from "../../constant/index";
 import Icon from "../Icon";
 import Label from "../label";
@@ -6,36 +5,57 @@ import "./index.css";
 
 class Folder {
   constructor(props) {
-    this.propsOnclick = props.onClick;
-    this.propsName = props.name;
-    this.propsOpenFolder = props.openFolder;
-    this.propsId = props.id;
     this.icon = new Icon({
-      icon: "fas fa-folder"
+      icon: "folder-icon"
     });
-    this.propOnDrop = props.onDrop;
     this.folderName = new Label({ name: props.name, fontSize: "20px" });
+
+    this.name = props.name;
+    this.id = props.id;
+    this.listFolder = props.listFolder;
+
+    this.onclick = props.onClick;
+    this.openFolder = props.openFolder;
+    this.onDrop = props.onDrop;
+    this.onSelect = props.onSelect;
   }
-  handleSelectFolder(fileLayout) {
-    let parentFileLayout = fileLayout.parentNode.children;
+  singleClick() {
+    let parentFileLayout = this.folderLayout.parentNode.children;
     for (let i = 0; i < parentFileLayout.length; i++) {
       let currentLabelFileItem = parentFileLayout[i];
-      if (parentFileLayout[i] === fileLayout) {
+      if (parentFileLayout[i] === this.folderLayout) {
         currentLabelFileItem.classList.add("selected");
       } else {
         currentLabelFileItem.classList.remove("selected");
       }
     }
   }
-
-  handleUnSelected(folderLayout) {
-    let parentFolder = folderLayout.parentNode.children;
-    for (let i = 0; i < parentFolder.length; i++) {
-      parentFolder[i].classList.remove("selected");
+  handleSelectFolder(event) {
+    let parentFileLayout = this.folderLayout.parentNode.children;
+    if (event.metaKey || event.ctrlKey) {
+      for (let i = 0; i < parentFileLayout.length; i++) {
+        let currentLabelFileItem = parentFileLayout[i];
+        if (parentFileLayout[i] === this.folderLayout) {
+          currentLabelFileItem.classList.add("selected");
+        }
+      }
+      this.onSelect(this.id, this.folderLayout, "multi");
+    } else {
+      this.singleClick();
+      this.onSelect(this.id, this.folderLayout);
     }
   }
+
+  handleUnSelect = () => {
+    if (this.folderLayout && this.folderLayout.parentNode) {
+      let parentFolder = this.folderLayout.parentNode.children;
+      for (let i = 0; i < parentFolder.length; i++) {
+        parentFolder[i].classList.remove("selected");
+      }
+    }
+  };
   handleOpenFolder() {
-    this.propsOpenFolder(this.propsId, this.propsName);
+    this.openFolder(this.id, this.name);
   }
   handleDragOver(event) {
     event.preventDefault();
@@ -43,26 +63,24 @@ class Folder {
   handleDrop = event => {
     event.preventDefault();
 
-    // let files = event.dataTransfer.files[0];
-    this.propOnDrop(this.propsId);
+    this.onDrop(this.id);
   };
   render() {
-    let folder = document.createElement("div");
-    folder.className = "folder";
-    folder.setAttribute("tabIndex", "-1");
-    folder.ondragover = event => this.handleDragOver(event);
-    folder.ondrop = event => this.handleDrop(event);
+    this.folderLayout = document.createElement("div");
+    this.folderLayout.className = "folder-layout";
+    this.folderLayout.draggable = "true";
+    this.folderLayout.ondragover = event => this.handleDragOver(event);
+    this.folderLayout.ondrop = event => this.handleDrop(event);
 
     let icon = this.icon.render();
-    folder.appendChild(icon);
+    this.folderLayout.appendChild(icon);
 
     let folderName = this.folderName.render();
-    folder.appendChild(folderName);
+    this.folderLayout.appendChild(folderName);
 
-    folder.onclick = () => this.handleSelectFolder(folder);
-    folder.onblur = () => this.handleUnSelected(folder);
-    folder.ondblclick = () => this.handleOpenFolder();
-    return folder;
+    this.folderLayout.onclick = event => this.handleSelectFolder(event);
+    this.folderLayout.ondblclick = () => this.handleOpenFolder();
+    return this.folderLayout;
   }
 }
 export default Folder;

@@ -2,3 +2,6 @@
   display: flex;
   align-items: center;
 }
+.label:hover + .tooltip {
+  opacity: 1;
+}

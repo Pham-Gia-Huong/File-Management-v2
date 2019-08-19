@@ -6,3 +6,38 @@
   margin-right: 20px;
   font-size: 50px;
 }
+
+.file-icon::after {
+  display: block;
+  content: attr(data-type);
+  position: absolute;
+  bottom: 0;
+  color: #fff;
+  font-size: 24px;
+  padding: 4px 10px;
+}
+.file-icon::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  border-style: solid;
+  border-width: 16px;
+  border-color: #fff #fff rgba(255, 255, 255, 0.35) rgba(255, 255, 255, 0.35);
+}
+.file-icon {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 4px;
+  margin-right: 0px;
+}
+
+.file-icon[data-type^="doc"] {
+  background: #307cf1;
+}
+.file-icon[data-type^="xls"] {
+  background: #0f9d58;
+}
+.file-icon[data-type^="pdf"] {
+  background: #d24726;
+}

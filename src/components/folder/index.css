@@ -1,12 +1,31 @@
-.grid-item .folder {
+.grid-item .folder-layout {
   display: flex;
   align-self: center;
-  width: calc(10% - 10px);
-  margin-right: 10px;
+  width: calc(10% - -20px);
   cursor: pointer;
   padding: 10px;
 }
 .selected {
   background: #e8f0fe !important;
   color: black !important;
+}
+
+.folder-icon {
+  margin-right: 20px;
+  width: 50px;
+  height: 30px;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.75);
+  border-radius: 0 6px 6px 6px;
+}
+
+.folder-icon:before {
+  content: "";
+  width: 50%;
+  height: 12px;
+  border-radius: 0 20px 0 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  position: absolute;
+  top: -12px;
+  left: 0px;
 }

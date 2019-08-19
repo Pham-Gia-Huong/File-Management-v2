@@ -1,6 +1,8 @@
 .grid-item {
   display: flex;
   flex-wrap: wrap;
+  max-height: 400px;
+  overflow-y: scroll;
 }
 #layout-grid {
   margin: 20px;

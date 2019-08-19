@@ -11,6 +11,10 @@
   font-size: 16px;
   bottom: 6px;
   padding: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 .file-item {
   position: relative;
@@ -20,4 +24,17 @@
 .selected {
   background: #e8f0fe !important;
   color: black !important;
+}
+.tooltip {
+  position: absolute;
+  bottom: 43px;
+  margin: 0px 15px;
+  background: #dcdbdb;
+  padding: 4px 15px;
+  color: black;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  opacity: 0;
+  transition: all;
 }

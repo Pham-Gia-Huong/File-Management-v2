@@ -1,38 +1,29 @@
-const util = {
-  js: {
-    disableField,
-    disableHistory,
-    hideFieldRecord
-  },
-  common: {
-    addRecord,
-    updateRecord
-  },
-  event: {
-    edit: {
-      setValueAndUploadFile,
-      getCurrentFileValue,
-      handleFillFileInfoToField
-    },
-    index: {
-      getAllRecord
-    }
-  },
-  folder: {
-    createFolder
-  },
-  breadcrumb: {},
-  file: { addFile, uploadFileDrop }
-};
 let currentFileValue = {};
 let elmFileInput;
 
-async function uploadFileDrop(parentFolder, listRecordId, currentParentFolder) {
+function resizeImage(src) {
+  return new kintone.Promise((resolve, reject) => {
+    var arr = src.split(",");
+    let type = arr[0].match(/:(.*?);/)[1];
+    let canvas = document.createElement("canvas");
+    canvas.width = 200;
+    canvas.height = 200;
+    let img = new Image();
+    img.src = `${src}`;
+    img.width = 200;
+    img.height = 200;
+    img.onload = () => {
+      let context = canvas.getContext("2d");
+      context.drawImage(img, 0, 0, img.width, img.height);
+      resolve(canvas.toDataURL(type));
+    };
+    img.onerror = err => reject(err);
+  });
+}
+async function uploadFileDrop(parentFolder, listRecordId) {
   let records = setValueFolderRecord(parentFolder, listRecordId);
   await updateMultiRecord(records);
-  let responListRecord = await getAllRecord(currentParentFolder);
-  let listRecord = responListRecord.records;
-  return listRecord;
+  return true;
 }
 function updateMultiRecord(records) {
   let body = {
@@ -43,9 +34,9 @@ function updateMultiRecord(records) {
 }
 function setValueFolderRecord(parentFolder, listRecordId) {
   let records = [];
-  listRecordId.map(id => {
+  listRecordId.map(record => {
     records.push({
-      id,
+      id: record.id,
       record: {
         parentFolder: {
           value: parentFolder
@@ -68,9 +59,8 @@ async function createFolder(folderName, parentFolder) {
     }
   };
   await addRecord(folderValue);
-  let responseRecord = await getAllRecord(parentFolder);
-  folderName = responseRecord.records[0].name.value;
-  return folderName;
+  let listRecord = await getAllRecord(parentFolder);
+  return listRecord[0];
 }
 function setDefaultValueTable() {
   let historyTable = [
@@ -101,8 +91,13 @@ async function addFile(file, parentFolder) {
       let response = await uploadFileKey(blob, file.name);
       let fileKey = response.result;
       fileInfo.fileKey = [JSON.parse(fileKey)];
-      let base64 = await convertFileToBase64(file);
-      fileInfo.thumb64 = base64;
+      let fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
+      let newBase64 = fileType;
+      if (fileType === "png" || fileType === "jpeg" || fileType === "jpg") {
+        let base64 = await convertFileToBase64(file);
+        newBase64 = await resizeImage(base64);
+      }
+      fileInfo.thumb64 = newBase64;
       let bodyNewFile = setNewValueFile(fileInfo, parentFolder);
       await addRecord(bodyNewFile);
       let listRecord = await getAllRecord(parentFolder);
@@ -113,7 +108,6 @@ async function addFile(file, parentFolder) {
   }
 }
 function setNewValueFile(fileInfo, parentFolder) {
-  // showSpinner();
   let bodyNewFile = {
     file: {
       value: fileInfo.fileKey
@@ -142,11 +136,13 @@ function setNewValueFile(fileInfo, parentFolder) {
   };
   return bodyNewFile;
 }
-async function getAllRecord(parentFolder = "0", limit = 500, offset = 0) {
+
+async function getAllRecord(parentFolder = "0", limit = 100, offset = 0, type) {
   let query = "";
   query = `limit ${limit} offset ${offset}`;
+  type = type ? `and type in ("${type}")` : "";
   if (parentFolder) {
-    query = `parentFolder = "${parentFolder}" limit ${limit} offset ${offset}`;
+    query = `parentFolder = "${parentFolder}" ${type} limit ${limit} offset ${offset} `;
   }
   let body = {
     app: kintone.app.getId(),
@@ -155,7 +151,7 @@ async function getAllRecord(parentFolder = "0", limit = 500, offset = 0) {
     totalCount: true
   };
   let listRecord = await kintone.api(kintone.api.url("/k/v1/records", true), "GET", body);
-  return listRecord;
+  return listRecord.records;
 }
 
 function addRecord(record) {
@@ -207,11 +203,14 @@ function disableField(objFieldRecord, type) {
     }
   }
 }
-
-function setValueAndUploadFile(event) {
+async function getStatusDeploy() {
+  return await kintone.api(kintone.api.url("/k/v1/preview/app/deploy", true), "GET", { apps: [kintone.app.getId()] });
+}
+async function setValueAndUploadFile(event) {
   let fileType = event.record.type.value;
   if (fileType === "File") {
-    updateFile(event);
+    return await updateFile(event);
+    // return getStatusDeploy();
   }
 }
 function uploadFileKey(blob, fileName) {
@@ -286,7 +285,7 @@ async function updateFile(event) {
   if (Object.keys(record).length === 0) {
     return;
   }
-  await updateRecord(event, record);
+  return await updateRecord(event, record);
 }
 function xmlHtppRequest(url, method, header, data) {
   return new kintone.Promise((resolve, reject) => {
@@ -345,6 +344,7 @@ function convertArrayBufferToBlob(resultArrBuffer) {
   let blob = new Blob([uint8Array], { type: fileType });
   return { blob, fileName };
 }
+
 async function downloadFile(fileKey) {
   let resultArrBuffer = await getArrayBuffer(fileKey);
   let blobAndFileName = convertArrayBufferToBlob(resultArrBuffer);
@@ -353,9 +353,17 @@ async function downloadFile(fileKey) {
   return newFileKey;
 }
 
-async function getListRecordByFolderId(id) {
-  let listRecord = await getAllRecord(id);
-  let newListRecord = listRecord.records.filter(record => record.parentFolder.value === id);
-  return newListRecord;
-}
-export { util, getListRecordByFolderId, uploadFileDrop };
+export {
+  addFile,
+  createFolder,
+  setValueAndUploadFile,
+  getCurrentFileValue,
+  handleFillFileInfoToField,
+  uploadFileDrop,
+  getAllRecord,
+  disableField,
+  disableHistory,
+  hideFieldRecord,
+  addRecord,
+  updateRecord
+};

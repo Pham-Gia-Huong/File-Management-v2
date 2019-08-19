@@ -1,66 +1,66 @@
 import "./index.css";
 class BreadCrumbs {
   constructor(props) {
-    this.listBreadCrumb = [...props.listBreadCrumb];
-    this.propOnSelected = props.onSelected;
     this.breadCrumbWrapper = document.createElement("div");
+    this.listBreadCrumb = [...props.listBreadCrumb];
+    this.OnSelected = props.onSelected;
   }
+
   getCurrentBreadCrumb() {
     return this.listBreadCrumb[this.listBreadCrumb.length - 1];
   }
-  reRenderBreadCrumb(listBreadCrumb) {
+
+  getPreviousBreadCrum() {
+    return this.listBreadCrumb[this.listBreadCrumb.length - 2];
+  }
+
+  reRenderBreadCrumb() {
     this.resetBreadCrumb();
-    this.listBreadCrumb = listBreadCrumb;
     this.renderItemBreadCrumb();
     this.removeLastArrow();
   }
+
   resetBreadCrumb() {
     let childBreadcrumb = this.breadCrumbWrapper.children;
     for (let i = childBreadcrumb.length - 1; i >= 0; i--) {
       this.breadCrumbWrapper.removeChild(childBreadcrumb[i]);
     }
   }
-  // setListFolder(folderId) {
-  //   let indexFolder = this.listBreadCrumb.findIndex(folder => folder.id === folderId);
-  //   let lastIndex = this.listBreadCrumb.length - 1;
-  //   if (lastIndex === indexFolder) {
-  //     return;
-  //   }
-  //   this.listBreadCrumb = this.listBreadCrumb.slice(0, indexFolder + 1);
-  // }
+
   removeLastArrow() {
     let elmChildWrap = this.breadCrumbWrapper.children;
-
     let elmLastArrow = elmChildWrap[elmChildWrap.length - 1];
+
     let isLastArrowExist = elmLastArrow && elmLastArrow.children[1];
     if (isLastArrowExist) {
       elmLastArrow.removeChild(elmLastArrow.children[1]);
     }
   }
+
   removeBreadCrumb(elmNameAndArrow) {
-    let indexElement = [...this.breadCrumbWrapper.children].indexOf(elmNameAndArrow);
-    let elmChildWrap = this.breadCrumbWrapper.children;
-    for (let i = elmChildWrap.length - 1; i >= 0; i--) {
-      if (i > indexElement) {
-        this.breadCrumbWrapper.removeChild(elmChildWrap[i]);
+    let elmIndex = [...this.breadCrumbWrapper.children].indexOf(elmNameAndArrow);
+    let elmChildWrapper = this.breadCrumbWrapper.children;
+    for (let i = elmChildWrapper.length - 1; i >= 0; i--) {
+      if (i > elmIndex) {
+        this.breadCrumbWrapper.removeChild(elmChildWrapper[i]);
       }
     }
-    this.removeLastArrow();
   }
   addBreadCrumb(id, name) {
     this.listBreadCrumb.push({ id, name });
-    this.reRenderBreadCrumb(this.listBreadCrumb);
+    this.reRenderBreadCrumb();
   }
-  handleSelected(elmNameAndArrow, breadCrumId) {
+  handleSelect(elmNameAndArrow, breadCrumId) {
     this.removeBreadCrumb(elmNameAndArrow, breadCrumId);
+    this.removeLastArrow();
     let indexBreadCrumb = this.listBreadCrumb.findIndex(breadCrumb => breadCrumb.id === breadCrumId);
     let newListBreadCrumb = this.listBreadCrumb.slice(0, indexBreadCrumb + 1);
     this.listBreadCrumb = newListBreadCrumb;
     let currentBreadCrumb = this.getCurrentBreadCrumb();
-    this.propOnSelected(currentBreadCrumb);
+    this.OnSelected(currentBreadCrumb);
   }
 
-  renderArrowDom(nameAndArrow, folder) {
+  renderArrow(nameAndArrow, folder) {
     let arrowRight = document.createElement("div");
     arrowRight.textContent = ">";
 
@@ -83,15 +83,16 @@ class BreadCrumbs {
       elmFolderName.textContent = breadCrumb.name;
       nameAndArrow.appendChild(elmFolderName);
 
-      this.renderArrowDom(nameAndArrow, breadCrumb);
+      this.renderArrow(nameAndArrow, breadCrumb);
 
-      elmFolderName.onclick = () => this.handleSelected(nameAndArrow, breadCrumb.id);
+      elmFolderName.onclick = () => this.handleSelect(nameAndArrow, breadCrumb.id);
       this.breadCrumbWrapper.appendChild(nameAndArrow);
     });
   }
   render() {
     this.breadCrumbWrapper.className = "bread-crumb-wrap";
     this.renderItemBreadCrumb();
+    this.removeLastArrow();
     return this.breadCrumbWrapper;
   }
 }
