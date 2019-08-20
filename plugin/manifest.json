@@ -1,0 +1,20 @@
+{
+  "manifest_version": 1,
+  "version": 1,
+  "type": "APP",
+  "name": {
+    "en": "Management app"
+  },
+  "description": {
+    "en": "This is manangement app"
+  },
+  "icon": "src/image/icon.png",
+  "desktop": {
+    "js": ["build/home.bundle.js"]
+  },
+  "config": {
+    "html": "index.html",
+    "js": ["build/bundle.js"],
+    "required_params": ["parentFolder", "type", "file", "fakeInput", "name", "extension", "size", "comment", "date", "history", "base64"]
+  }
+}

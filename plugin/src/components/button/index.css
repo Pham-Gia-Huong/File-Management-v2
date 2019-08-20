@@ -1,0 +1,47 @@
+.button {
+  border: none;
+  background: #f4f7f8;
+  padding: 10px 15px;
+  color: #3498db;
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
+.kintoneplugin-button-dialog-cancel {
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 0 16px;
+  min-width: 163px;
+  height: 48px;
+  outline: none;
+  border: 1px solid #e3e7e8;
+  background-color: #f7f9fa;
+  box-shadow: 1px 1px 1px #fff inset;
+  color: #3498db;
+  text-align: center;
+  line-height: 48px;
+}
+
+.kintoneplugin-button-dialog-cancel:hover {
+  background-color: #c8d6dd;
+  box-shadow: none;
+  cursor: pointer;
+}
+.kintoneplugin-button-dialog-ok {
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 0 16px;
+  min-width: 163px;
+  height: 48px;
+  outline: none;
+  border: 1px solid #e3e7e8;
+  background-color: #3498db;
+  box-shadow: 1px 1px 1px #8ccbee inset;
+  color: #fff;
+  text-align: center;
+  line-height: 48px;
+}
+
+.kintoneplugin-button-dialog-ok:hover {
+  background-color: #1d6fa5;
+  cursor: pointer;
+}

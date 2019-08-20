@@ -11,9 +11,10 @@ class Label {
   }
   setStyle = style => {
     for (const key in style) {
-      if (style.hasOwnProperty(key)) {
-        this.label.style[key] = style[key];
+      if (!style.hasOwnProperty(key)) {
+        return;
       }
+      this.label.style[key] = style[key];
     }
   };
   render() {

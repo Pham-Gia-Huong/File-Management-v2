@@ -2,20 +2,13 @@ const path = require("path");
 
 module.exports = {
   entry: {
-    home: path.resolve("index.js")
+    home: path.resolve("plugin/config.js")
   },
   watch: true,
   output: {
     path: path.resolve(__dirname, "build"),
-    filename: "[name].bundle.js"
+    filename: "bundle.js"
   },
-  // optimization: {
-  //   splitChunks: {
-  //     minSize: 25000,
-  //     maxSize: 90000,
-  //     chunks: "all"
-  //   }
-  // },
   devtool: "eval-source-map",
   module: {
     rules: [

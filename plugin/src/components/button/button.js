@@ -4,7 +4,7 @@ class Button {
     this.button = document.createElement("button");
     this.className = props.className;
     this.name = props.name;
-    this.style = { ...props.style };
+    this.style = props.style ? { ...props.style } : null;
     this.onClick = props.onClick;
     this.onMousedown = props.onMousedown || function() {};
   }

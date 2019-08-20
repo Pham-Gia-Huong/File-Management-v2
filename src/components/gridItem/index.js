@@ -30,7 +30,9 @@ class GridItem {
     let isRoll = false;
     let height = event.target.scrollHeight;
     let top = event.target.scrollTop;
-    if (height - top < 410) {
+    console.log(this.gridItem.offsetHeight);
+
+    if (height - top < this.gridItem.offsetHeight + 10) {
       isRoll = true;
     }
     this.onScroll(isRoll);
@@ -110,13 +112,13 @@ class GridItem {
     }
     return false;
   }
-  reRender(folders, type, reset = true) {
+  reRender(items, type, reset = true) {
     if (type === "single") {
-      this.renderOneGrid(folders);
+      this.renderOneGrid(items);
     } else if (type === "multiple") {
-      this.renderListGrid(folders, reset);
+      this.renderListGrid(items, reset);
     } else if (type === "singleDrop") {
-      this.renderGridAfterDrop(folders);
+      this.renderGridAfterDrop(items);
     }
   }
 

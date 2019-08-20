@@ -6,7 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production",
-    "start": "webpack-dev-server --mode development"
+    "start": "webpack-dev-server --mode development",
+    "plugin": "kintone-plugin-packer --ppk dpkacnfamepcnieljkgoejbmadcfhabi.ppk plugin",
+    "watch-plugin": "kintone-plugin-packer --watch plugin",
+    "build-plugin": "webpack --mode production --config plugin/webpack.config.js"
   },
   "author": "",
   "license": "ISC",

@@ -6,7 +6,7 @@ import Spinner from "../components/spinner";
 import { createFolder, uploadFileDrop, getAllRecord, addFile } from "../util";
 
 class Container {
-  fetchData = async () => {
+  fetchInitialData = async () => {
     this.listFile = await getAllRecord("0", 10, 0, "File");
     this.listFolder = await getAllRecord("0", 50, 0, "Folder");
 
@@ -27,13 +27,13 @@ class Container {
 
     this.popupNewFolder;
     this.listGrid = [];
-    this.isCall = true;
+    this.IshasMoreRecord = true;
     this.offset = 10;
 
     this.btnMoveOut.hide();
   };
 
-  async setValueFileOrFolderList(parentFolder) {
+  async fetchFileAndFolderList(parentFolder) {
     this.listFile = await getAllRecord(parentFolder, 10, 0, "File");
     this.listFolder = await getAllRecord(parentFolder, 50, 0, "Folder");
   }
@@ -49,7 +49,7 @@ class Container {
     this.checkStatusBtnMoveOut(currentFolder.name);
     this.folderGrid.resetListItemGrid();
     this.fileGrid.resetListItemGrid();
-    this.isCall = true;
+    this.IshasMoreRecord = true;
     await this.renderGridItemByFolderClick(currentFolder.id);
   };
 
@@ -90,7 +90,7 @@ class Container {
       this.fileGrid.renderContentNotFound();
     }
   }
-  dropFolderToFile = async parentFolder => {
+  dropFileToFolder = async parentFolder => {
     let listItemGrid = this.getListItemGrid();
     if (!listItemGrid) {
       return;
@@ -104,7 +104,7 @@ class Container {
     }
   };
 
-  dropFolderToFolder = async parentFolder => {
+  dropFileToFolder = async parentFolder => {
     let isUploadLoadFolder = this.buildUploadRecordDrop(parentFolder);
     if (isUploadLoadFolder) {
       this.folderGrid.reRender(this.listGrid, "singleDrop");
@@ -143,7 +143,7 @@ class Container {
 
   async renderGridItemByFolderClick(id) {
     this.spinner.showSpinner();
-    await this.setValueFileOrFolderList(id);
+    await this.fetchFileAndFolderList(id);
     this.folderGrid.reRender(this.listFolder, "multiple");
     this.fileGrid.reRender(this.listFile, "multiple");
     this.spinner.hideSpinner();
@@ -152,7 +152,7 @@ class Container {
   handleOpenFolder = async (id, name) => {
     this.breadCrumb.addBreadCrumb(id, name);
     this.checkStatusBtnMoveOut(name);
-    this.isCall = true;
+    this.IshasMoreRecord = true;
     await this.renderGridItemByFolderClick(id);
   };
   createFolderGrid = () => {
@@ -162,7 +162,7 @@ class Container {
       title: "Folder",
       className: "folder",
       handleOpenFolder: this.handleOpenFolder,
-      onDropFolder: this.dropFolderToFile,
+      onDropFolder: this.dropFileToFolder,
       onSelect: this.btnMoveOut.enble,
       onUnselect: this.btnMoveOut.disable
     });
@@ -180,8 +180,8 @@ class Container {
     }
   };
   handleLoadMore = async isRoll => {
-    if (isRoll && this.isCall) {
-      this.isCall = false;
+    if (isRoll && this.IshasMoreRecord) {
+      this.IshasMoreRecord = false;
       let parentFolder = this.breadCrumb.getCurrentBreadCrumb() ? this.breadCrumb.getCurrentBreadCrumb().id : "0";
       this.spinner.showSpinner();
       let listFile = await getAllRecord(parentFolder, 10, this.offset, "File");
@@ -189,7 +189,7 @@ class Container {
         this.offset = 10;
         this.spinner.hideSpinner();
       } else {
-        this.isCall = true;
+        this.IshasMoreRecord = true;
         this.offset = this.offset + 10;
         this.fileGrid.reRender(listFile, "multiple", false);
         this.spinner.hideSpinner();

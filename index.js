@@ -10,6 +10,7 @@ import {
 } from "./src/util";
 import InputFile from "./src/components/inputFile";
 import Spinner from "./src/components/spinner";
+import DropDown from "./src/components/dropdown/index";
 
 (function() {
   kintone.events.on("app.record.edit.submit.success", async event => {
@@ -49,9 +50,10 @@ import Spinner from "./src/components/spinner";
     }
     let container = new Container();
     let spinner = new Spinner();
+    let dropdown = new DropDown({ name: "Parent Folder" });
     let containerGrid = document.getElementById("layout-grid");
     spinner.showSpinner();
-    container.fetchData().then(() => {
+    container.fetchInitialData().then(() => {
       spinner.hideSpinner();
       containerGrid.appendChild(container.render());
     });
