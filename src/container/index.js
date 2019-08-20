@@ -170,8 +170,8 @@ class Container {
       this.fileGrid.reRender(newFile, "single");
     }
   };
-  handleLoadMore = async isRoll => {
-    if (isRoll && this.hasMoreRecord) {
+  handleLoadMore = async () => {
+    if (this.hasMoreRecord) {
       this.hasMoreRecord = false;
       let parentFolder = this.breadCrumb.getCurrentBreadCrumb() ? this.breadCrumb.getCurrentBreadCrumb().id : "0";
       this.spinner.showSpinner();

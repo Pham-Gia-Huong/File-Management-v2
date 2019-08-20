@@ -27,13 +27,11 @@ class GridItem {
     this.onUnselect = props.onUnselect;
   }
   rollItemGrid = event => {
-    let isRoll = false;
     let height = event.target.scrollHeight;
     let top = event.target.scrollTop;
     if (height - top < this.gridItem.offsetHeight + 10) {
-      isRoll = true;
+      this.onScroll();
     }
-    this.onScroll(isRoll);
   };
 
   bindEventDragAndDrop() {
