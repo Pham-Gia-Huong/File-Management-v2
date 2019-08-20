@@ -30,8 +30,6 @@ class GridItem {
     let isRoll = false;
     let height = event.target.scrollHeight;
     let top = event.target.scrollTop;
-    console.log(this.gridItem.offsetHeight);
-
     if (height - top < this.gridItem.offsetHeight + 10) {
       isRoll = true;
     }

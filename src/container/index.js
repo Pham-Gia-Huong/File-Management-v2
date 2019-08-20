@@ -27,7 +27,7 @@ class Container {
 
     this.popupNewFolder;
     this.listGrid = [];
-    this.IshasMoreRecord = true;
+    this.hasMoreRecord = true;
     this.offset = 10;
 
     this.btnMoveOut.hide();
@@ -49,7 +49,7 @@ class Container {
     this.checkStatusBtnMoveOut(currentFolder.name);
     this.folderGrid.resetListItemGrid();
     this.fileGrid.resetListItemGrid();
-    this.IshasMoreRecord = true;
+    this.hasMoreRecord = true;
     await this.renderGridItemByFolderClick(currentFolder.id);
   };
 
@@ -104,15 +104,6 @@ class Container {
     }
   };
 
-  dropFileToFolder = async parentFolder => {
-    let isUploadLoadFolder = this.buildUploadRecordDrop(parentFolder);
-    if (isUploadLoadFolder) {
-      this.folderGrid.reRender(this.listGrid, "singleDrop");
-      this.Spinner.hideSpinner();
-      this.listGrid = [];
-    }
-  };
-
   handleRemoveBlurGridItem = () => {
     this.fileGrid.setAllowBlur(false);
     this.folderGrid.setAllowBlur(false);
@@ -152,7 +143,7 @@ class Container {
   handleOpenFolder = async (id, name) => {
     this.breadCrumb.addBreadCrumb(id, name);
     this.checkStatusBtnMoveOut(name);
-    this.IshasMoreRecord = true;
+    this.hasMoreRecord = true;
     await this.renderGridItemByFolderClick(id);
   };
   createFolderGrid = () => {
@@ -180,8 +171,8 @@ class Container {
     }
   };
   handleLoadMore = async isRoll => {
-    if (isRoll && this.IshasMoreRecord) {
-      this.IshasMoreRecord = false;
+    if (isRoll && this.hasMoreRecord) {
+      this.hasMoreRecord = false;
       let parentFolder = this.breadCrumb.getCurrentBreadCrumb() ? this.breadCrumb.getCurrentBreadCrumb().id : "0";
       this.spinner.showSpinner();
       let listFile = await getAllRecord(parentFolder, 10, this.offset, "File");
@@ -189,7 +180,7 @@ class Container {
         this.offset = 10;
         this.spinner.hideSpinner();
       } else {
-        this.IshasMoreRecord = true;
+        this.hasMoreRecord = true;
         this.offset = this.offset + 10;
         this.fileGrid.reRender(listFile, "multiple", false);
         this.spinner.hideSpinner();
